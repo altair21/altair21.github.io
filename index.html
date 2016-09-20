@@ -343,118 +343,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/08/02/【译】/" itemprop="url">
-                  OS X终端配置
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-08-02T22:47:54+08:00" content="2016-08-02">
-              2016-08-02
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/02/【译】/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/02/【译】/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <h2 id="u524D_u8A00"><a href="#u524D_u8A00" class="headerlink" title="前言"></a>前言</h2><p>我在OS X下也进行了不少次终端配置，每一次配置都忘了以往是怎么配置的，又各种google。刚好昨天公司配了台新的笔记本，我就把终端配置总结一下，方便自己日后查看。其实关于OS X的终端配置，池建强老师的<a href="http://macshuo.com/?p=676" target="_blank" rel="external">这篇文章</a>就很好，也是我第一次配置的重要参照。</p>
-<hr>
-<h2 id="iTerm2"><a href="#iTerm2" class="headerlink" title="iTerm2"></a>iTerm2</h2><p>可能这个软件就是叫做“iTerm2”，因为即使它的version已经到了3.0.5，iTerm后面的数字还是2。<br>iTerm2比系统原生终端强大很多，首先下载iTerm2以替代Terminal。</p>
-<hr>
-<h2 id="Homebrew"><a href="#Homebrew" class="headerlink" title="Homebrew"></a>Homebrew</h2><p>Homebrew作为OS X上的apt-get和yum，使用Mac的开发者应该都听说过，它的安装很简单，直接参照<a href="http://brew.sh/" target="_blank" rel="external">官网</a>。</p>
-<hr>
-<h2 id="Cocoapods"><a href="#Cocoapods" class="headerlink" title="Cocoapods"></a>Cocoapods</h2><p>或许它未来会被Swift Package Manager替代，但现在仍然是我开发iOS时管理第三方库的首选工具，首先移除被墙的ruby官方源<br><code>gem sources --remove https://rubygems.org/</code><br>然后添加淘宝源<br><code>gem sources -a http://ruby.taobao.org/</code><br>然后安装cocoapods<br><code>sudo gem install cocoapods</code></p>
-<hr>
-<h2 id="u66F4_u6539_u914D_u8272"><a href="#u66F4_u6539_u914D_u8272" class="headerlink" title="更改配色"></a>更改配色</h2><p>我使用的配色方案是<a href="http://ethanschoonover.com/solarized" target="_blank" rel="external">Solarized</a>，我在atom上使用这个配色感觉很恶心，但是在终端上使用却觉得很舒服。官网下载好之后解压，找到iTerm2对应的文件夹，双击后缀为<em>.itermcolors</em>的文件，就安装好了，提示信息告诉了你怎么使用：<br><img src="http://ww4.sinaimg.cn/large/0060lm7Tgw1f6ft52hvs2j30tk0ew0uq.jpg" alt=""></p>
-<p>先别着急关Preferences窗口，在Text选项卡里把<em>Draw bold text in bright colors</em>前的勾去掉，配色才能正常显示。</p>
-<p>字体我使用了Menlo常规体14号字，看上去大概是这个样子<br><img src="http://ww2.sinaimg.cn/large/0060lm7Tgw1f6fta3e0vbj31760vc0yh.jpg" alt="这是我终端最终的样子"></p>
-<hr>
-<h2 id="zsh"><a href="#zsh" class="headerlink" title="zsh"></a>zsh</h2><p>OS X默认的shell是bash，但是它已预装了六个shell，可以在终端敲入<code>cat /etc/shells</code>查看，别的我也没有用过，看了池建强老师的文章我直接就换成zsh了。<br>输入<code>chsh -s /bin/zsh</code>可以将shell切换成zsh，需重启终端。</p>
-<hr>
-<h2 id="oh-my-zsh"><a href="#oh-my-zsh" class="headerlink" title="oh-my-zsh"></a>oh-my-zsh</h2><p>安装傻瓜化zsh配置工具oh-my-zsh，安装及使用见<a href="https://github.com/robbyrussell/oh-my-zsh" target="_blank" rel="external">项目主页</a></p>
-<hr>
-<h2 id="autojump"><a href="#autojump" class="headerlink" title="autojump"></a>autojump</h2><p>autojump是一个快速跳转的插件，只要你进入过的目录都可以通过它快速跳转，使用起来也很简单，只需输入目录名或者目录名包含的子串即可，如下图所示：<br><img src="http://ww4.sinaimg.cn/large/0060lm7Tgw1f6ftxv41xtj30i002wdgv.jpg" alt=""></p>
-<p>autojump和git是zsh中我必开的两个插件，我记得oh-my-zsh好像预装了autojump只不过没有开启，但我还是通过homebrew自己下载了一遍：<code>brew install autojump</code>，然后在<em>~/.zshrc</em>文件中的plugins位置添加上autojump。</p>
-<hr>
-<h2 id="u6B22_u8FCE_u56FE_u6848"><a href="#u6B22_u8FCE_u56FE_u6848" class="headerlink" title="欢迎图案"></a>欢迎图案</h2><p>在之前我截的那张完整的终端样式里可以看到，我的终端顶部有一些欢迎文字，其实那是我的id：altair21，用特殊字符拼接而成，要添加这些文字只需修改<em>/etc/motd</em>的内容，我的样式是在<a href="http://ascii.mastervb.net/text_to_ascii.php" target="_blank" rel="external">这个网站</a>生成的，只支持ASCII字符，所以中文不行。</p>
-<hr>
-<h2 id="u884C_u9996_u6587_u5B57"><a href="#u884C_u9996_u6587_u5B57" class="headerlink" title="行首文字"></a>行首文字</h2><p>行首文字也是可以自定义的，这个可以根据oh-my-zsh的主题不同而不同，首先看看<em>~/.zshrc</em>中<em>ZSH_THEME</em>字段的内容，获取当前oh-my-zsh的主题，我的是默认的robbyrussell，于是编辑该主题的配置文件<code>vim ~/.oh-my-zsh/themes/robbyrussell.zsh-theme</code>，我的样式如截图所示，配置是这样写的：<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">local</span> ret_status=<span class="string">"%(?:%&#123;<span class="variable">$fg_bold</span>[green]%&#125;➜ :%&#123;<span class="variable">$fg_bold</span>[red]%&#125;➜ %s)%&#123;<span class="variable">$fg_bold</span>[red]%&#125;[%&#123;<span class="variable">$fg_bold</span>[blue]%&#125;altair21%&#123;<span class="variable">$fg_bold</span>[yellow]%&#125;@%&#123;<span class="variable">$fg_bold</span>[cyan]%&#125;MacBook-Pro"</span></span><br><span class="line">PROMPT=<span class="string">'<span class="variable">$&#123;ret_status&#125;</span>%&#123;<span class="variable">$fg_bold</span>[green]%&#125;%p %&#123;<span class="variable">$fg</span>[green]%&#125;%c %&#123;<span class="variable">$fg_bold</span>[blue]%&#125;$(git_prompt_info)%&#123;<span class="variable">$fg_bold</span>[blue]%&#125;%&#123;<span class="variable">$fg_bold</span>[red]%&#125;]%&#123;<span class="variable">$fg_bold</span>[cyan]%&#125;$%&#123;<span class="variable">$reset_color</span>%&#125;%  '</span> </span><br><span class="line"></span><br><span class="line">ZSH_THEME_GIT_PROMPT_PREFIX=<span class="string">"git:(%&#123;<span class="variable">$fg</span>[red]%&#125;"</span></span><br><span class="line">ZSH_THEME_GIT_PROMPT_SUFFIX=<span class="string">"%&#123;<span class="variable">$reset_color</span>%&#125;"</span></span><br><span class="line">ZSH_THEME_GIT_PROMPT_DIRTY=<span class="string">"%&#123;<span class="variable">$fg</span>[blue]%&#125;) %&#123;<span class="variable">$fg</span>[yellow]%&#125;✗%&#123;<span class="variable">$reset_color</span>%&#125;"</span></span><br><span class="line">ZSH_THEME_GIT_PROMPT_CLEAN=<span class="string">"%&#123;<span class="variable">$fg</span>[blue]%&#125;)"</span></span><br></pre></td></tr></table></figure></p>
-<p>因为采用了配色方案，颜色仅供参考。</p>
-<hr>
-<h2 id="u4ECEFinder_u5F53_u524D_u8DEF_u5F84_u6253_u5F00_u7EC8_u7AEF"><a href="#u4ECEFinder_u5F53_u524D_u8DEF_u5F84_u6253_u5F00_u7EC8_u7AEF" class="headerlink" title="从Finder当前路径打开终端"></a>从Finder当前路径打开终端</h2><p>从终端进入Finder只需敲入<code>open .</code>即可，从Finder进入终端稍复杂一些，系统有选项可以设置，但我觉得那种方法太过复杂，我在github上找到了<a href="https://github.com/jbtule/cdto" target="_blank" rel="external">这个</a>，安装好只需在Finder活跃状态下打开Spotlight/Alfred输入<code>cd to</code>即可。</p>
-
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/08/02/OS X终端配置/" itemprop="url">
                   OS X终端配置
                 </a>
@@ -1434,7 +1322,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-count">9</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
