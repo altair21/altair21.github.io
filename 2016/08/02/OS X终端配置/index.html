@@ -61,10 +61,10 @@ iTerm2可能这个软件就是叫做“iTerm2”，因为即使它的version已�
 <meta property="og:description" content="前言我在OS X下也进行了不少次终端配置，每一次配置都忘了以往是怎么配置的，又各种google。刚好昨天公司配了台新的笔记本，我就把终端配置总结一下，方便自己日后查看。其实关于OS X的终端配置，池建强老师的这篇文章就很好，也是我第一次配置的重要参照。
 
 iTerm2可能这个软件就是叫做“iTerm2”，因为即使它的version已经到了3.0.5，iTerm后面的数字还是2。iTerm2比系统原">
-<meta property="og:image" content="http://ww4.sinaimg.cn/large/0060lm7Tgw1f6ft52hvs2j30tk0ew0uq.jpg">
-<meta property="og:image" content="http://ww2.sinaimg.cn/large/0060lm7Tgw1f6fta3e0vbj31760vc0yh.jpg">
-<meta property="og:image" content="http://ww4.sinaimg.cn/large/0060lm7Tgw1f6ftxv41xtj30i002wdgv.jpg">
-<meta property="og:updated_time" content="2016-08-03T15:11:31.000Z">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/0060lm7Tgw1f6ft52hvs2j30tk0ew0uq.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/0060lm7Tgw1f6fta3e0vbj31760vc0yh.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/0060lm7Tgw1f6ftxv41xtj30i002wdgv.jpg">
+<meta property="og:updated_time" content="2016-09-20T11:38:09.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OS X终端配置">
 <meta name="twitter:description" content="前言我在OS X下也进行了不少次终端配置，每一次配置都忘了以往是怎么配置的，又各种google。刚好昨天公司配了台新的笔记本，我就把终端配置总结一下，方便自己日后查看。其实关于OS X的终端配置，池建强老师的这篇文章就很好，也是我第一次配置的重要参照。
@@ -288,15 +288,15 @@ iTerm2可能这个软件就是叫做“iTerm2”，因为即使它的version已�
 <hr>
 <h2 id="Cocoapods"><a href="#Cocoapods" class="headerlink" title="Cocoapods"></a>Cocoapods</h2><p>或许它未来会被Swift Package Manager替代，但现在仍然是我开发iOS时管理第三方库的首选工具，首先移除被墙的ruby官方源<br><code>gem sources --remove https://rubygems.org/</code><br>然后添加淘宝源<br><code>gem sources -a http://ruby.taobao.org/</code><br>然后安装cocoapods<br><code>sudo gem install cocoapods</code></p>
 <hr>
-<h2 id="u66F4_u6539_u914D_u8272"><a href="#u66F4_u6539_u914D_u8272" class="headerlink" title="更改配色"></a>更改配色</h2><p>我使用的配色方案是<a href="http://ethanschoonover.com/solarized" target="_blank" rel="external">Solarized</a>，我在atom上使用这个配色感觉很恶心，但是在终端上使用却觉得很舒服。官网下载好之后解压，找到iTerm2对应的文件夹，双击后缀为<em>.itermcolors</em>的文件，就安装好了，提示信息告诉了你怎么使用：<br><img src="http://ww4.sinaimg.cn/large/0060lm7Tgw1f6ft52hvs2j30tk0ew0uq.jpg" alt=""></p>
+<h2 id="u66F4_u6539_u914D_u8272"><a href="#u66F4_u6539_u914D_u8272" class="headerlink" title="更改配色"></a>更改配色</h2><p>我使用的配色方案是<a href="http://ethanschoonover.com/solarized" target="_blank" rel="external">Solarized</a>，我在atom上使用这个配色感觉很恶心，但是在终端上使用却觉得很舒服。官网下载好之后解压，找到iTerm2对应的文件夹，双击后缀为<em>.itermcolors</em>的文件，就安装好了，提示信息告诉了你怎么使用：<br><img src="https://ws4.sinaimg.cn/large/0060lm7Tgw1f6ft52hvs2j30tk0ew0uq.jpg" alt=""></p>
 <p>先别着急关Preferences窗口，在Text选项卡里把<em>Draw bold text in bright colors</em>前的勾去掉，配色才能正常显示。</p>
-<p>字体我使用了Menlo常规体14号字，看上去大概是这个样子<br><img src="http://ww2.sinaimg.cn/large/0060lm7Tgw1f6fta3e0vbj31760vc0yh.jpg" alt="这是我终端最终的样子"></p>
+<p>字体我使用了Menlo常规体14号字，看上去大概是这个样子<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f6fta3e0vbj31760vc0yh.jpg" alt="这是我终端最终的样子"></p>
 <hr>
 <h2 id="zsh"><a href="#zsh" class="headerlink" title="zsh"></a>zsh</h2><p>OS X默认的shell是bash，但是它已预装了六个shell，可以在终端敲入<code>cat /etc/shells</code>查看，别的我也没有用过，看了池建强老师的文章我直接就换成zsh了。<br>输入<code>chsh -s /bin/zsh</code>可以将shell切换成zsh，需重启终端。</p>
 <hr>
 <h2 id="oh-my-zsh"><a href="#oh-my-zsh" class="headerlink" title="oh-my-zsh"></a>oh-my-zsh</h2><p>安装傻瓜化zsh配置工具oh-my-zsh，安装及使用见<a href="https://github.com/robbyrussell/oh-my-zsh" target="_blank" rel="external">项目主页</a></p>
 <hr>
-<h2 id="autojump"><a href="#autojump" class="headerlink" title="autojump"></a>autojump</h2><p>autojump是一个快速跳转的插件，只要你进入过的目录都可以通过它快速跳转，使用起来也很简单，只需输入目录名或者目录名包含的子串即可，如下图所示：<br><img src="http://ww4.sinaimg.cn/large/0060lm7Tgw1f6ftxv41xtj30i002wdgv.jpg" alt=""></p>
+<h2 id="autojump"><a href="#autojump" class="headerlink" title="autojump"></a>autojump</h2><p>autojump是一个快速跳转的插件，只要你进入过的目录都可以通过它快速跳转，使用起来也很简单，只需输入目录名或者目录名包含的子串即可，如下图所示：<br><img src="https://ws4.sinaimg.cn/large/0060lm7Tgw1f6ftxv41xtj30i002wdgv.jpg" alt=""></p>
 <p>autojump和git是zsh中我必开的两个插件，我记得oh-my-zsh好像预装了autojump只不过没有开启，但我还是通过homebrew自己下载了一遍：<code>brew install autojump</code>，然后在<em>~/.zshrc</em>文件中的plugins位置添加上autojump。</p>
 <hr>
 <h2 id="u6B22_u8FCE_u56FE_u6848"><a href="#u6B22_u8FCE_u56FE_u6848" class="headerlink" title="欢迎图案"></a>欢迎图案</h2><p>在之前我截的那张完整的终端样式里可以看到，我的终端顶部有一些欢迎文字，其实那是我的id：altair21，用特殊字符拼接而成，要添加这些文字只需修改<em>/etc/motd</em>的内容，我的样式是在<a href="http://ascii.mastervb.net/text_to_ascii.php" target="_blank" rel="external">这个网站</a>生成的，只支持ASCII字符，所以中文不行。</p>

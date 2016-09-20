@@ -57,10 +57,10 @@
 <meta property="og:url" content="http://note.altair21.org/2016/01/08/githug攻略(1~55)/index.html">
 <meta property="og:site_name" content="altair21的学习笔记">
 <meta property="og:description" content="githug是一个让你熟悉git命令的小游戏，项目地址在这里https://github.com/Gazler/githug 。看了一下commit记录发现是几年前就有这个了，只是前些天我的rss几个源都推荐了，恰好又在v2ex上看到，就试玩了一下。　　我之前一直是使用SourceTree这个GUI软件来使用git，这个软件真的很好用。我就借此机会通过githug来强化一下对git命令的使用，顺便">
-<meta property="og:image" content="http://i4.tietuku.com/9ef8b4ebb347080e.png">
-<meta property="og:image" content="http://i4.tietuku.com/5cf4dd3ed811d9c1.png">
-<meta property="og:image" content="http://i4.tietuku.com/0816e4cd9b084344.png">
-<meta property="og:updated_time" content="2016-01-10T14:13:25.000Z">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg">
+<meta property="og:updated_time" content="2016-09-20T11:36:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="githug攻略(1~55)">
 <meta name="twitter:description" content="githug是一个让你熟悉git命令的小游戏，项目地址在这里https://github.com/Gazler/githug 。看了一下commit记录发现是几年前就有这个了，只是前些天我的rss几个源都推荐了，恰好又在v2ex上看到，就试玩了一下。　　我之前一直是使用SourceTree这个GUI软件来使用git，这个软件真的很好用。我就借此机会通过githug来强化一下对git命令的使用，顺便">
@@ -303,7 +303,7 @@
 <hr>
 <h1 id="Level9_3A_status"><a href="#Level9_3A_status" class="headerlink" title="Level9: status"></a>Level9: status</h1><p>There are some files in this repository, one of the files is untracked, which file is it?</p>
 <p>status命令的使用<br><figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">status</span></span><br></pre></td></tr></table></figure></p>
-<p>结果如图：<br><img src="http://i4.tietuku.com/9ef8b4ebb347080e.png" alt=""></p>
+<p>结果如图：<br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""></p>
 <p>Untracked files一目了然</p>
 <hr>
 <h1 id="Level10_3A_number_of_files_committed"><a href="#Level10_3A_number_of_files_committed" class="headerlink" title="Level10: number_of_files_committed"></a>Level10: number_of_files_committed</h1><p>There are some files in this repository, how many of the files will be committed?</p>
@@ -402,7 +402,7 @@
 <p>rebase命令的使用<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout feature</span><br><span class="line">git rebase <span class="literal">master</span></span><br></pre></td></tr></table></figure></p>
 <hr>
 <h1 id="Level41_3A_repack"><a href="#Level41_3A_repack" class="headerlink" title="Level41: repack"></a>Level41: repack</h1><p>Optimise how your repository is packaged ensuring that redundant packs are removed.</p>
-<p>这个命令压根没见过，help里的说明如图<br><img src="http://i4.tietuku.com/5cf4dd3ed811d9c1.png" alt=""><br><img src="http://i4.tietuku.com/0816e4cd9b084344.png" alt=""><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git repack <span class="operator">-d</span></span><br></pre></td></tr></table></figure></p>
+<p>这个命令压根没见过，help里的说明如图<br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""><br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git repack <span class="operator">-d</span></span><br></pre></td></tr></table></figure></p>
 <hr>
 <h1 id="Level42_3A_cherry-pick"><a href="#Level42_3A_cherry-pick" class="headerlink" title="Level42: cherry-pick"></a>Level42: cherry-pick</h1><p>Your new feature isn’t worth the time and you’re going to delete it. But it has one commit that fills in <code>README</code> file, and you want this commit to be on the master as well.</p>
 <p>cherry-pick命令的使用，找到对应的commit id<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git checkout<span class="instruction"> new-feature</span><br><span class="line"></span>git log</span><br><span class="line">git checkout master</span><br><span class="line">git cherry-pick ca32a6dac7b6f97975edbe19a4296c2ee7682f68</span><br></pre></td></tr></table></figure></p>

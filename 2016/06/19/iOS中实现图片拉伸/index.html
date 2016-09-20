@@ -65,11 +65,11 @@
 就是要实现这个切图的拉伸，达到动图中的效果，气泡的尖角始终对准时间线上的小圆点。（ps：具备像素眼的童鞋可能发现这几个气泡的高度不是等差的，这是因为我在气泡的下面还加了一个透明的view，气泡的边线与该view的边线间有一定的间隙，label显示的是tableViewCell的整体高度）
 
 0x01关于i">
-<meta property="og:image" content="http://ww2.sinaimg.cn/large/0060lm7Tgw1f50s5xqbgvg309i0e9drj.gif">
-<meta property="og:image" content="http://ww2.sinaimg.cn/large/0060lm7Tgw1f50s7kh33pj302f0310sh.jpg">
-<meta property="og:image" content="http://ww2.sinaimg.cn/large/0060lm7Tgw1f50uk36xlgj30he0godgh.jpg">
-<meta property="og:image" content="http://ww1.sinaimg.cn/large/0060lm7Tgw1f50umr4pa6j30hc05c3yj.jpg">
-<meta property="og:updated_time" content="2016-06-19T13:31:21.000Z">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50s5xqbgvg309i0e9drj.gif">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50s7kh33pj302f0310sh.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50uk36xlgj30he0godgh.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/0060lm7Tgw1f50umr4pa6j30hc05c3yj.jpg">
+<meta property="og:updated_time" content="2016-09-20T11:37:19.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS中实现图片拉伸">
 <meta name="twitter:description" content="0x00这是我在公司做项目时遇到的一个需求，就是实现类似下图的效果
@@ -287,8 +287,8 @@
       
 
       
-        <span itemprop="articleBody"><h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><p>这是我在公司做项目时遇到的一个需求，就是实现类似下图的效果<br><img src="http://ww2.sinaimg.cn/large/0060lm7Tgw1f50s5xqbgvg309i0e9drj.gif" alt=""></p>
-<p>右侧气泡的切图是这样的：<br><img src="http://ww2.sinaimg.cn/large/0060lm7Tgw1f50s7kh33pj302f0310sh.jpg" alt=""></p>
+        <span itemprop="articleBody"><h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><p>这是我在公司做项目时遇到的一个需求，就是实现类似下图的效果<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50s5xqbgvg309i0e9drj.gif" alt=""></p>
+<p>右侧气泡的切图是这样的：<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50s7kh33pj302f0310sh.jpg" alt=""></p>
 <p>就是要实现这个切图的拉伸，达到动图中的效果，气泡的尖角始终对准时间线上的小圆点。（ps：具备像素眼的童鞋可能发现这几个气泡的高度不是等差的，这是因为我在气泡的下面还加了一个透明的view，气泡的边线与该view的边线间有一定的间隙，label显示的是tableViewCell的整体高度）</p>
 <hr>
 <h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h2><p>关于iOS中图片的拉伸，我看的小码哥写的<a href="http://blog.csdn.net/q199109106q/article/details/8615661" target="_blank" rel="external">这篇文章</a>，图片拉伸的中文资料相对来说要少一些，而且为数不多的文章里内容也大多是重复的。<br>小码哥的文章里介绍了端盖的概念，其实我不是很理解，写代码试了试之后大概有一点概念，但是某些情况我还是不知道是什么原因造成的，这个到后面再说。<br>我选择使用<code>- (UIImage *)resizableImageWithCapInsets:(UIEdgeInsets)capInsets resizingMode:(UIImageResizingMode)resizingMode</code>这个方法，对应下来代码如下：<br><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_bubbleImage.<span class="built_in">image</span> = [<span class="built_in">image</span> resizableImageWithCapInsets:UIEdgeInsetsMake(<span class="built_in">image</span>.<span class="built_in">size</span>.<span class="variable">height</span> * <span class="number">0.7</span>f, <span class="built_in">image</span>.<span class="built_in">size</span>.<span class="variable">width</span> * <span class="number">0.3</span>f, <span class="built_in">image</span>.<span class="built_in">size</span>.<span class="variable">height</span> * <span class="number">0.3</span>f, <span class="built_in">image</span>.<span class="built_in">size</span>.<span class="variable">width</span> * <span class="number">0.7</span>f) resizingMode:UIImageResizingModeStretch];</span><br></pre></td></tr></table></figure></p>
@@ -299,8 +299,8 @@
 <p><font color="red">可拉伸区域不可能取到0 x 0，至少是1 x 1，而且1 x 1的时候渲染速度最快</font>，所以我选择了这些数值。</p>
 <p>水平方向的取值道理和垂直方向一样，只要左半部分尺寸不要太低以致气泡尖角被拉伸就可以。</p>
 <hr>
-<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h2><p>现在让我们来更深入的研究一下。<br>当我设置上半部分55%和下半部分55%不拉伸的时候，即<code>UIEdgeInsetsMake(image.size.height * 0.55f, image.size.width * 0.3f, image.size.height * 0.55f, image.size.width * 0.7f)</code>，会出现这样的情况：<br><img src="http://ww2.sinaimg.cn/large/0060lm7Tgw1f50uk36xlgj30he0godgh.jpg" alt=""></p>
-<p>我本以为这样会和上下各50%不拉伸产生一样的情况，恰好尖角被拉伸：<br><img src="http://ww1.sinaimg.cn/large/0060lm7Tgw1f50umr4pa6j30hc05c3yj.jpg" alt=""></p>
+<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h2><p>现在让我们来更深入的研究一下。<br>当我设置上半部分55%和下半部分55%不拉伸的时候，即<code>UIEdgeInsetsMake(image.size.height * 0.55f, image.size.width * 0.3f, image.size.height * 0.55f, image.size.width * 0.7f)</code>，会出现这样的情况：<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50uk36xlgj30he0godgh.jpg" alt=""></p>
+<p>我本以为这样会和上下各50%不拉伸产生一样的情况，恰好尖角被拉伸：<br><img src="https://ws1.sinaimg.cn/large/0060lm7Tgw1f50umr4pa6j30hc05c3yj.jpg" alt=""></p>
 <p>现在我猜测当UIEdgeInsets有重叠部分的时候，top的优先级高于bottom，同理left的优先级高于right，产生红圈标记出的奇怪现象的可能就是从上边界往下数55%的位置正好是尖角的下部分，由于UIEdgeInsets区域重叠，在垂直方向还是只拉伸一个像素，就把尖角部分的那一个像素给拉伸了。<br>但是我没有找到官方文档中相应的部分可以佐证我的想法。<br>我觉得这一切都是因为官方文档里的那句话：</p>
 <blockquote>
 <p>for nonzero cap insets(因为没有0 x 0的可拉伸区域)</p>
