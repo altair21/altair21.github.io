@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>altair21的学习笔记</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://note.altair21.org/"/>
+  <updated>2016-10-20T02:22:18.000Z</updated>
+  <id>http://note.altair21.org/</id>
+  
+  <author>
+    <name>altair21</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>AngularJS 中 $timeout 和  $interval 引发的问题</title>
+    <link href="http://note.altair21.org/2016/10/19/AngularJS%20%E4%B8%AD$timeout%20%E5%92%8C%20$interval%20%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98/"/>
+    <id>http://note.altair21.org/2016/10/19/AngularJS 中$timeout 和 $interval 引发的问题/</id>
+    <published>2016-10-19T14:27:15.000Z</published>
+    <updated>2016-10-20T02:22:18.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p>前几天遇到了一个问题，就是在 AngularJS 中 $state 发生改变（或者称之为路由发生变化）不会清空前一个 scope 的内容，具体情景如下图</p>
+<p><img src="https://ws4.sinaimg.cn/large/9ce43335jw1f8xsm8wz9lg20a1057ju2.gif" alt=""></p>
+<p>我在这个 scope 添加了一个间隔十分钟的 $interval，为了方便演示我改成了三秒钟的，当我进行数次在这个页面和其他页面间切换后，发现这个 scope 里的 $interval 重叠了，之前的 $interval 都没有销毁，不仅表现出现了错误，还造成了内存泄漏。</p>
+<hr>
+<h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>解决方法是在 scope 触发 $destroy 时或者 $state 触发 $stateChangeSuccess 时手动取消 $interval</p>
+<pre><code>var intervalCancel = $interval(func, 3000);
+
+$scope.$on(&quot;$destroy&quot;, function (e) {   //$stateChangeSuccess
+    if (intervalCancel)
+        $interval.cancel(intervalCancel);
+});
+</code></pre><p>现在看起来就正常了<br><img src="https://ws4.sinaimg.cn/large/9ce43335jw1f8yiohbw6lg20a1057dh7.gif" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot; class=&quot;headerlink&quot; title=&quot;0x00&quot;&gt;&lt;/a&gt;0x00&lt;/h3&gt;&lt;p&gt;前几天遇到了一个问题，就是在 AngularJS 中 $state 发生改变（或者称之为路由发生变化）不会清空前一个 sco
+    
+    </summary>
+    
+    
+      <category term="JS" scheme="http://note.altair21.org/tags/JS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Chrome extension开发小记</title>
+    <link href="http://note.altair21.org/2016/08/12/Chrome%20extension%E5%BC%80%E5%8F%91%E5%B0%8F%E8%AE%B0/"/>
+    <id>http://note.altair21.org/2016/08/12/Chrome extension开发小记/</id>
+    <published>2016-08-12T14:47:54.000Z</published>
+    <updated>2016-09-20T11:42:22.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><p>每次访问stackoverflow都有一点很烦，就是我如果想看一个回答发布的具体时间，只能把鼠标移到时间上等待两秒出现悬浮窗来显示。由于技术发展太快，所以有些五年前解决这个问题的相关API到了当前很可能已经不适用了或者已有了更好的解决办法，所以stackoverflow上我也会尽量看时间最近的讨论，显示完整的回答/评论发布时间对我来说就会方便很多。<br>为了解决这个痛点，我一直打算自己搞一个chrome的小扩展来修改页面的DOM，刚好今天手头活干完了，看了一下chrome扩展开发的文档，发现比想象中要简单很多，于是自己试了一下，完成了这个小扩展。</p>
+<hr>
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h2><p>chrome的扩展核心文件是一个json，给浏览器提供一些关于扩展样式和行为的信息（主要是引用资源文件和脚本文件），还有必备属性如扩展名称和版本号。这个json文件叫做<font color="#66ccff">manifest.json</font>，关于它的字段名可以参考<a href="https://developer.chrome.com/extensions/manifest" target="_blank" rel="external">官方文档</a>。这里不再赘述。<br>我的扩展需要在<code>stackoverflow.com/question/*</code>页面上自动执行修改DOM的操作，并且在document加载结束后执行，所以json文件这么写<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   "<span class="attribute">content_scripts</span>": <span class="value">[ &#123;</span><br><span class="line">      "<span class="attribute">js</span>": <span class="value">[ <span class="string">"script.js"</span> ]</span>,</span><br><span class="line">      "<span class="attribute">matches</span>": <span class="value">[ <span class="string">"http://stackoverflow.com/questions/*"</span> ]</span>,</span><br><span class="line">      "<span class="attribute">run_at</span>": <span class="value"><span class="string">"document_end"</span></span><br><span class="line">   </span>&#125; ]</span>,</span><br><span class="line">   "<span class="attribute">description</span>": <span class="value"><span class="string">"This extension can display full date in reply and comment of stackoverflow.com"</span></span>,</span><br><span class="line">   "<span class="attribute">manifest_version</span>": <span class="value"><span class="number">2</span></span>,</span><br><span class="line">   "<span class="attribute">name</span>": <span class="value"><span class="string">"Stackoverflow Full Date"</span></span>,</span><br><span class="line">   "<span class="attribute">version</span>": <span class="value"><span class="string">"0.1"</span></span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h2><p>接下来用chrome的开发者工具找到stackoverflow页面中显示时间的位置，找到对应的标签，answer的时间标签的class是<code>relativetime</code>，comment的时间标签的class是<code>relativetime-clean</code>，完整的时间在标签的title属性里。</p>
+<hr>
+<h2 id="0x03"><a href="#0x03" class="headerlink" title="0x03"></a>0x03</h2><p>接下来编写<font color="#66ccff">script.js</font>脚本文件。这个脚本需要把上一步提到的那些元素找到，替换标签中间的文本内容为标签的title属性值。<br>脚本一定得在页面DOM元素加载完才能执行，否则是无法找到对应的标签的，所以最理想的位置是<code>document.domContentLoaded</code>发生时。<br>完整代码如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">showFullDate</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> arr = <span class="built_in">document</span>.getElementsByClassName(<span class="string">"relativetime"</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; arr.length; i++) &#123;</span><br><span class="line">        arr[i].childNodes[<span class="number">0</span>].nodeValue = arr[i].getAttribute(<span class="string">"title"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> arr2 = <span class="built_in">document</span>.getElementsByClassName(<span class="string">"relativetime-clean"</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; arr2.length; i++) &#123;</span><br><span class="line">        arr2[i].childNodes[<span class="number">0</span>].nodeValue = arr2[i].getAttribute(<span class="string">"title"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.domContentLoaded = showFullDate();</span><br></pre></td></tr></table></figure>
+<p>两个文件，11行JavaScript代码，就实现了这个功能。</p>
+<hr>
+<h2 id="0x04"><a href="#0x04" class="headerlink" title="0x04"></a>0x04</h2><p>其实你的chrome里的所有扩展，你都可以得到源码，方法如下：</p>
+<ol>
+<li>在chrome地址栏输入<code>chrome://extensions</code>进入扩展程序管理页。</li>
+<li>勾选中“开发者模式”，此时得到了所有扩展的ID。</li>
+<li>在chrome地址栏输入<code>chrome-extension://&lt;extensionID&gt;/manifest.json</code>。</li>
+</ol>
+<p>因为在地址栏输入<code>chrome-extension://&lt;extensionID&gt;/&lt;pathToFile&gt;</code>就可以得到扩展程序中的对应文件，而每一个扩展程序必定包含<font color="#66ccff">manifest.json</font>文件，扩展程序的所有html、css、js以及各种图片资源文件都需要在这个json文件中引用，所以可以通过这种方式获取到扩展程序的源码以及静态资源。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot; class=&quot;headerlink&quot; title=&quot;0x00&quot;&gt;&lt;/a&gt;0x00&lt;/h2&gt;&lt;p&gt;每次访问stackoverflow都有一点很烦，就是我如果想看一个回答发布的具体时间，只能把鼠标移到时间上等待两秒出现悬浮窗
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>OS X终端配置</title>
+    <link href="http://note.altair21.org/2016/08/02/OS%20X%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AE/"/>
+    <id>http://note.altair21.org/2016/08/02/OS X终端配置/</id>
+    <published>2016-08-02T14:47:54.000Z</published>
+    <updated>2016-09-20T11:38:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="u524D_u8A00"><a href="#u524D_u8A00" class="headerlink" title="前言"></a>前言</h2><p>我在OS X下也进行了不少次终端配置，每一次配置都忘了以往是怎么配置的，又各种google。刚好昨天公司配了台新的笔记本，我就把终端配置总结一下，方便自己日后查看。其实关于OS X的终端配置，池建强老师的<a href="http://macshuo.com/?p=676" target="_blank" rel="external">这篇文章</a>就很好，也是我第一次配置的重要参照。</p>
+<hr>
+<h2 id="iTerm2"><a href="#iTerm2" class="headerlink" title="iTerm2"></a>iTerm2</h2><p>可能这个软件就是叫做“iTerm2”，因为即使它的version已经到了3.0.5，iTerm后面的数字还是2。<br>iTerm2比系统原生终端强大很多，首先下载iTerm2以替代Terminal。</p>
+<hr>
+<h2 id="Homebrew"><a href="#Homebrew" class="headerlink" title="Homebrew"></a>Homebrew</h2><p>Homebrew作为OS X上的apt-get和yum，使用Mac的开发者应该都听说过，它的安装很简单，直接参照<a href="http://brew.sh/" target="_blank" rel="external">官网</a>。</p>
+<hr>
+<h2 id="Cocoapods"><a href="#Cocoapods" class="headerlink" title="Cocoapods"></a>Cocoapods</h2><p>或许它未来会被Swift Package Manager替代，但现在仍然是我开发iOS时管理第三方库的首选工具，首先移除被墙的ruby官方源<br><code>gem sources --remove https://rubygems.org/</code><br>然后添加淘宝源<br><code>gem sources -a http://ruby.taobao.org/</code><br>然后安装cocoapods<br><code>sudo gem install cocoapods</code></p>
+<hr>
+<h2 id="u66F4_u6539_u914D_u8272"><a href="#u66F4_u6539_u914D_u8272" class="headerlink" title="更改配色"></a>更改配色</h2><p>我使用的配色方案是<a href="http://ethanschoonover.com/solarized" target="_blank" rel="external">Solarized</a>，我在atom上使用这个配色感觉很恶心，但是在终端上使用却觉得很舒服。官网下载好之后解压，找到iTerm2对应的文件夹，双击后缀为<em>.itermcolors</em>的文件，就安装好了，提示信息告诉了你怎么使用：<br><img src="https://ws4.sinaimg.cn/large/0060lm7Tgw1f6ft52hvs2j30tk0ew0uq.jpg" alt=""></p>
+<p>先别着急关Preferences窗口，在Text选项卡里把<em>Draw bold text in bright colors</em>前的勾去掉，配色才能正常显示。</p>
+<p>字体我使用了Menlo常规体14号字，看上去大概是这个样子<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f6fta3e0vbj31760vc0yh.jpg" alt="这是我终端最终的样子"></p>
+<hr>
+<h2 id="zsh"><a href="#zsh" class="headerlink" title="zsh"></a>zsh</h2><p>OS X默认的shell是bash，但是它已预装了六个shell，可以在终端敲入<code>cat /etc/shells</code>查看，别的我也没有用过，看了池建强老师的文章我直接就换成zsh了。<br>输入<code>chsh -s /bin/zsh</code>可以将shell切换成zsh，需重启终端。</p>
+<hr>
+<h2 id="oh-my-zsh"><a href="#oh-my-zsh" class="headerlink" title="oh-my-zsh"></a>oh-my-zsh</h2><p>安装傻瓜化zsh配置工具oh-my-zsh，安装及使用见<a href="https://github.com/robbyrussell/oh-my-zsh" target="_blank" rel="external">项目主页</a></p>
+<hr>
+<h2 id="autojump"><a href="#autojump" class="headerlink" title="autojump"></a>autojump</h2><p>autojump是一个快速跳转的插件，只要你进入过的目录都可以通过它快速跳转，使用起来也很简单，只需输入目录名或者目录名包含的子串即可，如下图所示：<br><img src="https://ws4.sinaimg.cn/large/0060lm7Tgw1f6ftxv41xtj30i002wdgv.jpg" alt=""></p>
+<p>autojump和git是zsh中我必开的两个插件，我记得oh-my-zsh好像预装了autojump只不过没有开启，但我还是通过homebrew自己下载了一遍：<code>brew install autojump</code>，然后在<em>~/.zshrc</em>文件中的plugins位置添加上autojump。</p>
+<hr>
+<h2 id="u6B22_u8FCE_u56FE_u6848"><a href="#u6B22_u8FCE_u56FE_u6848" class="headerlink" title="欢迎图案"></a>欢迎图案</h2><p>在之前我截的那张完整的终端样式里可以看到，我的终端顶部有一些欢迎文字，其实那是我的id：altair21，用特殊字符拼接而成，要添加这些文字只需修改<em>/etc/motd</em>的内容，我的样式是在<a href="http://ascii.mastervb.net/text_to_ascii.php" target="_blank" rel="external">这个网站</a>生成的，只支持ASCII字符，所以中文不行。</p>
+<hr>
+<h2 id="u884C_u9996_u6587_u5B57"><a href="#u884C_u9996_u6587_u5B57" class="headerlink" title="行首文字"></a>行首文字</h2><p>行首文字也是可以自定义的，这个可以根据oh-my-zsh的主题不同而不同，首先看看<em>~/.zshrc</em>中<em>ZSH_THEME</em>字段的内容，获取当前oh-my-zsh的主题，我的是默认的robbyrussell，于是编辑该主题的配置文件<code>vim ~/.oh-my-zsh/themes/robbyrussell.zsh-theme</code>，我的样式如截图所示，配置是这样写的：<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">local</span> ret_status=<span class="string">"%(?:%&#123;<span class="variable">$fg_bold</span>[green]%&#125;➜ :%&#123;<span class="variable">$fg_bold</span>[red]%&#125;➜ %s)%&#123;<span class="variable">$fg_bold</span>[red]%&#125;[%&#123;<span class="variable">$fg_bold</span>[blue]%&#125;altair21%&#123;<span class="variable">$fg_bold</span>[yellow]%&#125;@%&#123;<span class="variable">$fg_bold</span>[cyan]%&#125;MacBook-Pro"</span></span><br><span class="line">PROMPT=<span class="string">'<span class="variable">$&#123;ret_status&#125;</span>%&#123;<span class="variable">$fg_bold</span>[green]%&#125;%p %&#123;<span class="variable">$fg</span>[green]%&#125;%c %&#123;<span class="variable">$fg_bold</span>[blue]%&#125;$(git_prompt_info)%&#123;<span class="variable">$fg_bold</span>[blue]%&#125;%&#123;<span class="variable">$fg_bold</span>[red]%&#125;]%&#123;<span class="variable">$fg_bold</span>[cyan]%&#125;$%&#123;<span class="variable">$reset_color</span>%&#125;%  '</span> </span><br><span class="line"></span><br><span class="line">ZSH_THEME_GIT_PROMPT_PREFIX=<span class="string">"git:(%&#123;<span class="variable">$fg</span>[red]%&#125;"</span></span><br><span class="line">ZSH_THEME_GIT_PROMPT_SUFFIX=<span class="string">"%&#123;<span class="variable">$reset_color</span>%&#125;"</span></span><br><span class="line">ZSH_THEME_GIT_PROMPT_DIRTY=<span class="string">"%&#123;<span class="variable">$fg</span>[blue]%&#125;) %&#123;<span class="variable">$fg</span>[yellow]%&#125;✗%&#123;<span class="variable">$reset_color</span>%&#125;"</span></span><br><span class="line">ZSH_THEME_GIT_PROMPT_CLEAN=<span class="string">"%&#123;<span class="variable">$fg</span>[blue]%&#125;)"</span></span><br></pre></td></tr></table></figure></p>
+<p>因为采用了配色方案，颜色仅供参考。</p>
+<hr>
+<h2 id="u4ECEFinder_u5F53_u524D_u8DEF_u5F84_u6253_u5F00_u7EC8_u7AEF"><a href="#u4ECEFinder_u5F53_u524D_u8DEF_u5F84_u6253_u5F00_u7EC8_u7AEF" class="headerlink" title="从Finder当前路径打开终端"></a>从Finder当前路径打开终端</h2><p>从终端进入Finder只需敲入<code>open .</code>即可，从Finder进入终端稍复杂一些，系统有选项可以设置，但我觉得那种方法太过复杂，我在github上找到了<a href="https://github.com/jbtule/cdto" target="_blank" rel="external">这个</a>，安装好只需在Finder活跃状态下打开Spotlight/Alfred输入<code>cd to</code>即可。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;u524D_u8A00&quot;&gt;&lt;a href=&quot;#u524D_u8A00&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;我在OS X下也进行了不少次终端配置，每一次配置都忘了以往是怎么配置的，又各种google。刚好昨天公司
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>iOS中实现图片拉伸</title>
+    <link href="http://note.altair21.org/2016/06/19/iOS%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E6%8B%89%E4%BC%B8/"/>
+    <id>http://note.altair21.org/2016/06/19/iOS中实现图片拉伸/</id>
+    <published>2016-06-19T14:47:54.000Z</published>
+    <updated>2016-09-20T11:37:19.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><p>这是我在公司做项目时遇到的一个需求，就是实现类似下图的效果<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50s5xqbgvg309i0e9drj.gif" alt=""></p>
+<p>右侧气泡的切图是这样的：<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50s7kh33pj302f0310sh.jpg" alt=""></p>
+<p>就是要实现这个切图的拉伸，达到动图中的效果，气泡的尖角始终对准时间线上的小圆点。（ps：具备像素眼的童鞋可能发现这几个气泡的高度不是等差的，这是因为我在气泡的下面还加了一个透明的view，气泡的边线与该view的边线间有一定的间隙，label显示的是tableViewCell的整体高度）</p>
+<hr>
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h2><p>关于iOS中图片的拉伸，我看的小码哥写的<a href="http://blog.csdn.net/q199109106q/article/details/8615661" target="_blank" rel="external">这篇文章</a>，图片拉伸的中文资料相对来说要少一些，而且为数不多的文章里内容也大多是重复的。<br>小码哥的文章里介绍了端盖的概念，其实我不是很理解，写代码试了试之后大概有一点概念，但是某些情况我还是不知道是什么原因造成的，这个到后面再说。<br>我选择使用<code>- (UIImage *)resizableImageWithCapInsets:(UIEdgeInsets)capInsets resizingMode:(UIImageResizingMode)resizingMode</code>这个方法，对应下来代码如下：<br><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_bubbleImage.<span class="built_in">image</span> = [<span class="built_in">image</span> resizableImageWithCapInsets:UIEdgeInsetsMake(<span class="built_in">image</span>.<span class="built_in">size</span>.<span class="variable">height</span> * <span class="number">0.7</span>f, <span class="built_in">image</span>.<span class="built_in">size</span>.<span class="variable">width</span> * <span class="number">0.3</span>f, <span class="built_in">image</span>.<span class="built_in">size</span>.<span class="variable">height</span> * <span class="number">0.3</span>f, <span class="built_in">image</span>.<span class="built_in">size</span>.<span class="variable">width</span> * <span class="number">0.7</span>f) resizingMode:UIImageResizingModeStretch];</span><br></pre></td></tr></table></figure></p>
+<p>这样就可以实现动图中的效果，看上去很简单是吗？<br>首先我们要明白一个概念，该方法中设置的UIEdgeInsets是图片不用被拉伸的区域，我这个需求的情况属于比较简单的，因为要拉伸的图片背景色纯白，不用考虑拉伸模式的问题，如果要考虑拉伸模式，那UIEdgeInsets就不能设置的这么随意了。<br>虽然切图中气泡的尖角在正中间，但该需求中气泡的尖角始终在气泡图片的上半部分。则上半部分不需要拉伸的部分应该更多，具体多少取决于图片的情况，这个切图中上半部分的60%就可以，下半部分就可以取10~40%不拉伸，但不能取的过于低（比如低于10%），因为这个图片的底部是有圆角的。<br>这个切图我上半部分取了70%，下半部分取了30%，加起来正好是100%，水平方向也是一样。这样看似是图片水平和垂直方向100%的内容都不进行拉伸，但实际还是拉伸了，可以看看官方文档里的说明：</p>
+<blockquote>
+<p>If resizable areas have a width or height of 1 pixel—that is, a horizontally resizable area is 1 pixel wide, a vertically resizable area is 1 pixel tall, or the center region of the image is 1 x 1 pixel—iOS draws the image by stretching the 1-pixel region. This mode provides the fastest performance (for nonzero cap insets).</p>
+</blockquote>
+<p><font color="red">可拉伸区域不可能取到0 x 0，至少是1 x 1，而且1 x 1的时候渲染速度最快</font>，所以我选择了这些数值。</p>
+<p>水平方向的取值道理和垂直方向一样，只要左半部分尺寸不要太低以致气泡尖角被拉伸就可以。</p>
+<hr>
+<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h2><p>现在让我们来更深入的研究一下。<br>当我设置上半部分55%和下半部分55%不拉伸的时候，即<code>UIEdgeInsetsMake(image.size.height * 0.55f, image.size.width * 0.3f, image.size.height * 0.55f, image.size.width * 0.7f)</code>，会出现这样的情况：<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f50uk36xlgj30he0godgh.jpg" alt=""></p>
+<p>我本以为这样会和上下各50%不拉伸产生一样的情况，恰好尖角被拉伸：<br><img src="https://ws1.sinaimg.cn/large/0060lm7Tgw1f50umr4pa6j30hc05c3yj.jpg" alt=""></p>
+<p>现在我猜测当UIEdgeInsets有重叠部分的时候，top的优先级高于bottom，同理left的优先级高于right，产生红圈标记出的奇怪现象的可能就是从上边界往下数55%的位置正好是尖角的下部分，由于UIEdgeInsets区域重叠，在垂直方向还是只拉伸一个像素，就把尖角部分的那一个像素给拉伸了。<br>但是我没有找到官方文档中相应的部分可以佐证我的想法。<br>我觉得这一切都是因为官方文档里的那句话：</p>
+<blockquote>
+<p>for nonzero cap insets(因为没有0 x 0的可拉伸区域)</p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot; class=&quot;headerlink&quot; title=&quot;0x00&quot;&gt;&lt;/a&gt;0x00&lt;/h2&gt;&lt;p&gt;这是我在公司做项目时遇到的一个需求，就是实现类似下图的效果&lt;br&gt;&lt;img src=&quot;https://ws2.sinaimg
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://note.altair21.org/tags/iOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>模仿花瓣APP的转场动画实现</title>
+    <link href="http://note.altair21.org/2016/06/09/%E6%A8%A1%E4%BB%BF%E8%8A%B1%E7%93%A3APP%E7%9A%84%E8%BD%AC%E5%9C%BA%E5%8A%A8%E7%94%BB%E5%AE%9E%E7%8E%B0/"/>
+    <id>http://note.altair21.org/2016/06/09/模仿花瓣APP的转场动画实现/</id>
+    <published>2016-06-09T14:47:54.000Z</published>
+    <updated>2016-09-20T11:34:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<hr>
+<h2 id="u52A8_u753B_u6548_u679C"><a href="#u52A8_u753B_u6548_u679C" class="headerlink" title="动画效果"></a>动画效果</h2><p>花瓣APP的转场动画比较有意思，我第一次看到就喜欢上了，为了美化自己毕业设计的游戏APP，我模仿了这个动画效果，花瓣APP的动画效果是这样的：<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f4pc8bjddyg30a90hxnpe.gif" alt=""></p>
+<p>这是我自己模仿的动画效果：<br><img src="https://ws4.sinaimg.cn/large/0060lm7Tgw1f4pda0lk6sg30m00glu0z.gif" alt=""></p>
+<p>其实效果还可以，不流畅是gif图的问题。</p>
+<h2 id="u5B9E_u73B0_u601D_u8DEF"><a href="#u5B9E_u73B0_u601D_u8DEF" class="headerlink" title="实现思路"></a>实现思路</h2><p>我的思路是点击视图时给该视图截图，生成UIImage，然后在0.4秒的时间内把这个图片放大到全屏幕（即转场后的视图的初始模样），动画效果结束的回调中放置真正的转场逻辑。</p>
+<p>我的思路就是这样，感觉比较简单，有个问题是我截图之后图片放大材质会失真，转场后的场景是Spritekit的GameScene，重新加载了材质，就清晰很多，在它们衔接的时候会明显感觉到材质变清晰了，这个问题我没有去解决它，可能因为我比较粗的原因。不过回退的转场动画是从第二个视图截的图，不会有材质失真的问题。<br>Spritekit场景下截图参考了<a href="http://yulingtianxia.com/blog/2014/04/22/spritekitjie-ping-bing-fen-xiang-zhi-she-jiao-wang-luo/" target="_blank" rel="external">这篇文章</a>。</p>
+<p>附上核心代码</p>
+<ol>
+<li>UIView截图</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">UIGraphicsBeginImageContext</span>(<span class="keyword">self</span>.previewZone.bounds.size)</span><br><span class="line"><span class="keyword">self</span>.previewZone.layer.renderInContext(<span class="type">UIGraphicsGetCurrentContext</span>()!)</span><br><span class="line"><span class="keyword">let</span> image = <span class="type">UIGraphicsGetImageFromCurrentImageContext</span>()</span><br><span class="line"><span class="type">UIGraphicsEndImageContext</span>()</span><br><span class="line"><span class="keyword">self</span>.superView.imageDic[<span class="keyword">self</span>.fileName!] = image</span><br></pre></td></tr></table></figure>
+<ol>
+<li>动画效果</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//topPanel是gif中顶部的黑色View，image就是存放截图的UIImageView</span></span><br><span class="line"><span class="keyword">self</span>.view.addSubview(topPanel)</span><br><span class="line"><span class="keyword">self</span>.view.addSubview(image)</span><br><span class="line"><span class="type">UIApplication</span>.sharedApplication().beginIgnoringInteractionEvents()</span><br><span class="line"><span class="type">UIView</span>.animateWithDuration(<span class="number">0.4</span>, animations: &#123;</span><br><span class="line">    image.frame = <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">64</span>, width: <span class="number">1024</span>, height: <span class="number">704</span>)</span><br><span class="line">    topPanel.frame = <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="number">1024</span>, height: <span class="number">64</span>)</span><br><span class="line">    topPanel.alpha = <span class="number">1</span></span><br><span class="line">&#125;) &#123; (res) <span class="keyword">in</span></span><br><span class="line">    image.removeFromSuperview()</span><br><span class="line">    topPanel.removeFromSuperview()</span><br><span class="line">    <span class="keyword">self</span>.navigationController?.pushViewController(vc, animated: <span class="literal">false</span>)</span><br><span class="line">    <span class="type">UIApplication</span>.sharedApplication().endIgnoringInteractionEvents()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>Spritekit场景中截图</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">imageFromSKNode</span><span class="params">(node: SKNode)</span></span> -&gt; <span class="type">UIImage</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> view = node.scene?.view</span><br><span class="line">    <span class="keyword">let</span> scale = <span class="type">UIScreen</span>.mainScreen().scale</span><br><span class="line">    <span class="keyword">let</span> nodeFrame = node.calculateAccumulatedFrame()</span><br><span class="line">    </span><br><span class="line">    <span class="type">UIGraphicsBeginImageContextWithOptions</span>(view!.bounds.size, <span class="literal">true</span>, <span class="number">0</span>)</span><br><span class="line">    view?.drawViewHierarchyInRect(view!.bounds, afterScreenUpdates: <span class="literal">true</span>)</span><br><span class="line">    <span class="keyword">let</span> sceneSnapshot = <span class="type">UIGraphicsGetImageFromCurrentImageContext</span>()</span><br><span class="line">    <span class="type">UIGraphicsEndImageContext</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> originY = sceneSnapshot.size.height*scale - nodeFrame.origin.y*scale - nodeFrame.size.height*scale</span><br><span class="line">    <span class="keyword">let</span> cropRect = <span class="type">CGRect</span>(x: node.frame.origin.x * scale,</span><br><span class="line">                          y: originY,</span><br><span class="line">                          width: node.frame.size.width * scale,</span><br><span class="line">                          height: node.frame.size.height * scale)</span><br><span class="line">    <span class="keyword">let</span> croppedSnapshot = <span class="type">CGImageCreateWithImageInRect</span>(sceneSnapshot.<span class="type">CGImage</span>, cropRect)</span><br><span class="line">    <span class="keyword">let</span> nodeSnapshot = <span class="type">UIImage</span>(<span class="type">CGImage</span>: croppedSnapshot!)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//retain屏幕的rect</span></span><br><span class="line">    <span class="keyword">let</span> resRect = <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">128</span>, width: <span class="number">2048</span>, height: <span class="number">1408</span>)</span><br><span class="line">    <span class="keyword">let</span> resCGSnapshot = <span class="type">CGImageCreateWithImageInRect</span>(nodeSnapshot.<span class="type">CGImage</span>, resRect)</span><br><span class="line">    <span class="keyword">let</span> resSnapshot = <span class="type">UIImage</span>(<span class="type">CGImage</span>: resCGSnapshot!)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> resSnapshot</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;hr&gt;
+&lt;h2 id=&quot;u52A8_u753B_u6548_u679C&quot;&gt;&lt;a href=&quot;#u52A8_u753B_u6548_u679C&quot; class=&quot;headerlink&quot; title=&quot;动画效果&quot;&gt;&lt;/a&gt;动画效果&lt;/h2&gt;&lt;p&gt;花瓣APP的转场动画比较有意思，我第一
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://note.altair21.org/tags/iOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>我的毕业设计</title>
+    <link href="http://note.altair21.org/2016/05/16/%E6%88%91%E7%9A%84%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1/"/>
+    <id>http://note.altair21.org/2016/05/16/我的毕业设计/</id>
+    <published>2016-05-16T14:27:15.000Z</published>
+    <updated>2016-09-20T11:34:18.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="u6982_u8FF0"><a href="#u6982_u8FF0" class="headerlink" title="概述"></a>概述</h3><p>这是我的本科毕业设计项目，一个iOS平台的2D游戏，使用SpriteKit引擎编写，游戏玩法仿照了<a href="https://www.hackingwithswift.com/" target="_blank" rel="external">HackWithSwift</a>第26个项目。<br>App的后台使用django，做了三个简单的API，分别是上传文件、下载文件和返回文件列表，具体内容参见<a href="https://github.com/altair21/MyGraduationProject/blob/master/Server/README.md" target="_blank" rel="external">服务端WIKI</a></p>
+<hr>
+<h3 id="u5730_u5740"><a href="#u5730_u5740" class="headerlink" title="地址"></a>地址</h3><p><a href="https://github.com/altair21/MyGraduationProject" target="_blank" rel="external">https://github.com/altair21/MyGraduationProject</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;u6982_u8FF0&quot;&gt;&lt;a href=&quot;#u6982_u8FF0&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h3&gt;&lt;p&gt;这是我的本科毕业设计项目，一个iOS平台的2D游戏，使用SpriteKit引擎编写，游戏玩法仿照了&lt;a 
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://note.altair21.org/tags/iOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用三种方法解决iOS8中TableViewCell的RightDetail不显示内容的问题</title>
+    <link href="http://note.altair21.org/2016/01/16/%E7%94%A8%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%E8%A7%A3%E5%86%B3iOS8%E4%B8%ADTableViewCell%E7%9A%84RightDetail%E4%B8%8D%E6%98%BE%E7%A4%BA%E5%86%85%E5%AE%B9%E7%9A%84%E9%97%AE%E9%A2%98/"/>
+    <id>http://note.altair21.org/2016/01/16/用三种方法解决iOS8中TableViewCell的RightDetail不显示内容的问题/</id>
+    <published>2016-01-15T17:47:54.000Z</published>
+    <updated>2016-09-20T11:35:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h2><p>　　不知道你有没有遇到过这样的问题，如下图<br>　　<img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""><br>　　第一个ViewController中有一个TableView，只有一个Cell，style为right detail，点击这个Cell会push进入第二个ViewController。第二个ViewController中有一个TextView，我设置了代理方法修改这个TextView的内容会更新到第一个ViewController的那个Cell的detailLabel里，但是当我清空TextView的内容后，再添加新的内容，detailLabel没法立即更新显示，当你手指（鼠标）点上去时它显示了出来，就像图片中显示的那样。<br>　　我进行了很多次测试，发现每一次如果是TextView清空-后退-再进入-添加内容-再后退，都会导致这个问题产生，不论是真机还是模拟器。我只在iOS9和iOS8中进行了测试，发现iOS9中不存在这个问题，不知道是不是iOS8的bug，可以看看stackoverflow上<a href="http://stackoverflow.com/questions/25987135/ios-8-uitableviewcell-detail-text-not-correctly-updating" target="_blank" rel="external">这篇讨论</a>。<br>　　我总结了三种方法来解决这个问题，demo文件传到了github上面：<a href="https://github.com/altair21/RightDetail_issueDemo" target="_blank" rel="external">https://github.com/altair21/RightDetail_issueDemo</a>，有三个branch分别是三种解决方案。<br>　　解决问题之前需要先搞清楚问题出在哪里，我在第一个ViewController的viewWillAppear方法里在控制台输出detailLabel的frame信息，发现detailLabel的frame在每次输出时都是上一个修改之前的值，在这个问题中就是清空之后frame的宽和高还是清空之前的值，只是此时detailLabel没有文字，再添加时返回回来frame的宽和高变为(0,0)，此时即使有文字也显示不出来了。<br>　　知道问题所在之后就好解决了，我想到了三种方法，分别对应三个branch的解决方案。</p>
+<hr>
+<h2 id="Solution__231"><a href="#Solution__231" class="headerlink" title="Solution #1"></a>Solution #1</h2><p>　　第一个思路是这样，既然布局更新不及时那就在每次第一个ViewController执行viewWillAppear时让它刷新Cell子控件的布局，具体做法就是在viewWillAppear中执行<code>tableCell.setNeedsLayout()</code>语句，所以这个方法看上去应该像这样：<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="func"><span class="keyword">func</span> <span class="title">viewWillAppear</span><span class="params">(animated: Bool)</span></span> &#123;</span><br><span class="line">		<span class="keyword">super</span>.viewWillAppear(animated)</span><br><span class="line">		tableCell.setNeedsLayout()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行效果如下图<br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""></p>
+<p>　　可以看到有一些延迟，这个原因我也不知道，心里猜了个大概，但是没有查资料佐证，所以不敢乱说。</p>
+<hr>
+<h2 id="Solution__232"><a href="#Solution__232" class="headerlink" title="Solution #2"></a>Solution #2</h2><p>　　第二个方法思路和第一个一样，不同的是这回我靠手动编写代码的方式来更新detailLabel的布局，你可以选择让detailLabel调用<code>sizeToFit</code>方法调整自己的宽度，再更新它的位置，或者选择根据传来的字符串调用<code>sizeWithAttributes</code>方法计算它应有的宽度，再用这个值去更新detailLabel的大小和位置，我选择的是后者<br>　　在实现第二个ViewController的代理方法时添加了几个语句，代码看上去是这样：<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">textViewChanged</span><span class="params">(text: String)</span></span> &#123;</span><br><span class="line">    rightLabel.text = text</span><br><span class="line">    <span class="keyword">let</span> string = text <span class="keyword">as</span> <span class="type">NSString</span></span><br><span class="line">    <span class="keyword">let</span> contentSize = string.sizeWithAttributes([<span class="type">NSFontAttributeName</span>: <span class="keyword">self</span>.rightLabel.font])</span><br><span class="line">    <span class="keyword">let</span> contentWidth = contentSize.width</span><br><span class="line">    <span class="keyword">let</span> contentHeight = contentSize.height</span><br><span class="line">    <span class="keyword">let</span> rightLabelMaxX = <span class="type">CGRectGetMaxX</span>(rightLabel.frame)</span><br><span class="line">    rightLabel.frame = <span class="type">CGRectMake</span>(rightLabelMaxX - contentWidth, rightLabel.frame.origin.y, contentWidth, contentHeight)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行效果如下图<br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""></p>
+<p>　　可以看出显示效果和第一个方法差不多，也存在延迟</p>
+<hr>
+<h2 id="Solution__233"><a href="#Solution__233" class="headerlink" title="Solution #3"></a>Solution #3</h2><p>　　前两种方法虽然显示出来了，但是存在肉眼可以观察到的延迟，非常不理想（但我还是建议你尝试一下，因为我之前测试时第二种方法是没有延迟的）。第三种方法换了一个实现思路，既然空字符串会导致detailLabel的宽和高变为(0,0)，进而导致文字显示不出来，那就让它不要变为(0,0)，也就是不要让它的空字符串传过来，于是将代码处理成这样：<br><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func textViewChanged(<span class="built_in">text</span>: <span class="keyword">String</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">text</span> == <span class="string">""</span> &#123;</span><br><span class="line">        rightLabel.<span class="built_in">text</span> = <span class="string">" "</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        rightLabel.<span class="built_in">text</span> = <span class="built_in">text</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行效果如下图<br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""></p>
+<p>　　这一回立刻刷新了，不过有一个问题需要注意，因为我们在push进入第二个ViewController之前手动用detailLabel给它的textView的text属性赋了值，假如我们强制将空字符串转为一个空格，在push进去之后那个textView就不为空，而是有一个空格，不过解决这个问题的方法就有很多了，你可以加一个标记值，再加逻辑判断等等，或者干脆提出更好的解决方法:)</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Issue&quot;&gt;&lt;a href=&quot;#Issue&quot; class=&quot;headerlink&quot; title=&quot;Issue&quot;&gt;&lt;/a&gt;Issue&lt;/h2&gt;&lt;p&gt;　　不知道你有没有遇到过这样的问题，如下图&lt;br&gt;　　&lt;img src=&quot;https://ws3.sinaimg.c
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://note.altair21.org/tags/iOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>githug攻略(1~55)</title>
+    <link href="http://note.altair21.org/2016/01/08/githug%E6%94%BB%E7%95%A5(1~55)/"/>
+    <id>http://note.altair21.org/2016/01/08/githug攻略(1~55)/</id>
+    <published>2016-01-08T11:15:09.000Z</published>
+    <updated>2016-09-20T11:36:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>　　githug是一个让你熟悉git命令的小游戏，项目地址在这里<a href="https://github.com/Gazler/githug" target="_blank" rel="external">https://github.com/Gazler/githug</a> 。看了一下commit记录发现是几年前就有这个了，只是前些天我的rss几个源都推荐了，恰好又在v2ex上看到，就试玩了一下。<br>　　我之前一直是使用<a href="https://www.sourcetreeapp.com/" target="_blank" rel="external">SourceTree</a>这个GUI软件来使用git，这个软件真的很好用。我就借此机会通过githug来强化一下对git命令的使用，顺便把我的攻略粘在这里以供参考。大部分是我自己写的，有些黑魔法和一些没见过的指令是我在网上查的，比如41，和44往后99%的内容:p。<br>　　githug的安装和使用在项目主页里都有，我就不多说了。</p>
+<hr>
+<h1 id="Level1_3A_init"><a href="#Level1_3A_init" class="headerlink" title="Level1: init"></a>Level1: init</h1><p>A new directory, <code>git_hug</code>, has been created; initialize an empty repository in it.</p>
+<p>git仓库初始化<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> git_hug/</span><br><span class="line">git init</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level2_3A_config"><a href="#Level2_3A_config" class="headerlink" title="Level2: config"></a>Level2: config</h1><p>Set up your git name and email, this is important so that your commits can be identified.</p>
+<p>设置你使用git的名字和邮箱地址<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user<span class="class">.name</span> altair21</span><br><span class="line">git config --global user<span class="class">.email</span> lovealtair21@gmail.com</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level3_3A_add"><a href="#Level3_3A_add" class="headerlink" title="Level3: add"></a>Level3: add</h1><p>There is a file in your folder called <code>README</code>, you should add it to your staging area<br>Note: You start each level with a new repo. Don’t look for files from the previous one.</p>
+<p>add命令的使用<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> <span class="keyword">add </span>README</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level4_3A_commit"><a href="#Level4_3A_commit" class="headerlink" title="Level4: commit"></a>Level4: commit</h1><p>The <code>README</code> file has been added to your staging area, now commit it.</p>
+<p>commit命令的使用<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="operator"><span class="keyword">commit</span> -<span class="keyword">m</span> <span class="string">"add README"</span></span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level5_3A_clone"><a href="#Level5_3A_clone" class="headerlink" title="Level5: clone"></a>Level5: clone</h1><p>Clone the repository at <a href="https://github.com/Gazler/cloneme" target="_blank" rel="external">https://github.com/Gazler/cloneme</a>.</p>
+<p>clone命令的使用<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">clone</span> <span class="title">https</span>://github.com/Gazler/cloneme</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level6_3A_clone_to_folder"><a href="#Level6_3A_clone_to_folder" class="headerlink" title="Level6: clone_to_folder"></a>Level6: clone_to_folder</h1><p>Clone the repository at <a href="https://github.com/Gazler/cloneme" target="_blank" rel="external">https://github.com/Gazler/cloneme</a> to <code>my_cloned_repo</code></p>
+<p>clone命令不加任何参数是clone到当前目录，现在clone到指定目录<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">clone</span> <span class="title">https</span>://github.com/Gazler/cloneme my_cloned_repo</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level7_3A_ignore"><a href="#Level7_3A_ignore" class="headerlink" title="Level7: ignore"></a>Level7: ignore</h1><p>The text editor ‘vim’ creates files ending in <code>.swp</code> (swap files) for all files that are currently open.  We don’t want them creeping into the repository.  Make this repository ignore <code>.swp</code> files.</p>
+<p>.gitignore文件的使用，忽略后缀为swp的文件<br>在.gitignore文件中添加一行：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*<span class="class">.swp</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level8_3A_include"><a href="#Level8_3A_include" class="headerlink" title="Level8: include"></a>Level8: include</h1><p>Notice a few files with the ‘.a’ extension.  We want git to ignore all but the ‘lib.a’ file.</p>
+<p>还是.gitignore文件的使用，忽略后缀为a的文件，但是不忽略lib.a文件<br>在.gitignore文件中添加：<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">*.a</span><br><span class="line">!<span class="class"><span class="keyword">lib</span>.<span class="title">a</span></span></span><br></pre></td></tr></table></figure></p>
+<p>取反符号在这里会起作用</p>
+<hr>
+<h1 id="Level9_3A_status"><a href="#Level9_3A_status" class="headerlink" title="Level9: status"></a>Level9: status</h1><p>There are some files in this repository, one of the files is untracked, which file is it?</p>
+<p>status命令的使用<br><figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">status</span></span><br></pre></td></tr></table></figure></p>
+<p>结果如图：<br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""></p>
+<p>Untracked files一目了然</p>
+<hr>
+<h1 id="Level10_3A_number_of_files_committed"><a href="#Level10_3A_number_of_files_committed" class="headerlink" title="Level10: number_of_files_committed"></a>Level10: number_of_files_committed</h1><p>There are some files in this repository, how many of the files will be committed?</p>
+<p>同样是status命令<br><figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">status</span></span><br></pre></td></tr></table></figure></p>
+<p>输入文件个数就行了</p>
+<hr>
+<h1 id="Level11_3A_rm"><a href="#Level11_3A_rm" class="headerlink" title="Level11: rm"></a>Level11: rm</h1><p>A file has been removed from the working tree, however the file was not removed from the repository.  Find out what this file was and remove it.</p>
+<p>先找到被删除的文件，再从仓库中删除<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">git</span> <span class="tag">status</span></span><br><span class="line"><span class="tag">git</span> <span class="tag">rm</span> <span class="tag">deleteme</span><span class="class">.rb</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level12_3A_rm_cached"><a href="#Level12_3A_rm_cached" class="headerlink" title="Level12: rm_cached"></a>Level12: rm_cached</h1><p>A file has accidentally been added to your staging area, find out which file and remove it from the staging area.  <em>NOTE</em> Do not remove the file from the file system, only from git.</p>
+<p>先找到在暂存区的文件，在从暂存区移除<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">git rm <span class="comment">--cached deleteme.rb</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level13_3A_stash"><a href="#Level13_3A_stash" class="headerlink" title="Level13: stash"></a>Level13: stash</h1><p>You’ve made some changes and want to work on them later. You should save them, but don’t commit them.</p>
+<p>stash命令的使用<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">git</span> stash</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level14_3A_rename"><a href="#Level14_3A_rename" class="headerlink" title="Level14: rename"></a>Level14: rename</h1><p>We have a file called <code>oldfile.txt</code>. We want to rename it to <code>newfile.txt</code> and stage this change.</p>
+<p>修改文件命并且添加到暂存区<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">git</span> <span class="tag">mv</span> <span class="tag">oldfile</span><span class="class">.txt</span> <span class="tag">newfile</span><span class="class">.txt</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level15_3A_restructure"><a href="#Level15_3A_restructure" class="headerlink" title="Level15: restructure"></a>Level15: restructure</h1><p>You added some files to your repository, but now realize that your project needs to be restructured.  Make a new folder named <code>src</code> and using Git move all of the .html files into this folder.</p>
+<p>还是git mv<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">mkdir</span> src</span><br><span class="line">git mv <span class="regexp">*.html</span> src</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level16_3A_log"><a href="#Level16_3A_log" class="headerlink" title="Level16: log"></a>Level16: log</h1><p>You will be asked for the hash of most recent commit.  You will need to investigate the logs of the repository for this.</p>
+<p>log命令的使用，找到最新一发commit的哈希值<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> -<span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level17_3A_tag"><a href="#Level17_3A_tag" class="headerlink" title="Level17: tag"></a>Level17: tag</h1><p>We have a git repo and we want to tag the current commit with <code>new_tag</code>.</p>
+<p>tag命令的使用<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">tag</span> <span class="title">new_tag</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level18_3A_push_tags"><a href="#Level18_3A_push_tags" class="headerlink" title="Level18: push_tags"></a>Level18: push_tags</h1><p>There are tags in the repository that aren’t pushed into remote repository. Push them now.</p>
+<p>push标签<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin <span class="comment">--tags</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level19_3A_commit_amend"><a href="#Level19_3A_commit_amend" class="headerlink" title="Level19: commit_amend"></a>Level19: commit_amend</h1><p>The <code>README</code> file has been committed, but it looks like the file <code>forgotten_file.rb</code> was missing from the commit.  Add the file and amend your previous commit to include it.</p>
+<p>追加commit<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add forgotten_file<span class="class">.rb</span></span><br><span class="line">git commit --amend -m <span class="string">"aaa"</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level20_3A_commit_in_future"><a href="#Level20_3A_commit_in_future" class="headerlink" title="Level20: commit_in_future"></a>Level20: commit_in_future</h1><p>Commit your changes with the future date (e.g. tomorrow).</p>
+<p>自定义commit时间<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit --date=<span class="number">2016.01</span><span class="number">.10</span> -m <span class="string">"commit"</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level21_3A_reset"><a href="#Level21_3A_reset" class="headerlink" title="Level21: reset"></a>Level21: reset</h1><p>There are two files to be committed.  The goal was to add each file as a separate commit, however both were added by accident.  Unstage the file <code>to_commit_second.rb</code> using the reset command (don’t commit anything).</p>
+<p>unstage操作<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="operator"><span class="keyword">reset</span> <span class="keyword">HEAD</span> to_commit_second.rb</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level22_3A_reset_soft"><a href="#Level22_3A_reset_soft" class="headerlink" title="Level22: reset_soft"></a>Level22: reset_soft</h1><p>You committed too soon. Now you want to undo the last commit, while keeping the index.</p>
+<p>版本回退并且修改保留到暂存区<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="operator"><span class="keyword">reset</span> <span class="comment">--soft HEAD~1</span></span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level23_3A_checkout_file"><a href="#Level23_3A_checkout_file" class="headerlink" title="Level23: checkout_file"></a>Level23: checkout_file</h1><p>A file has been modified, but you don’t want to keep the modification.  Checkout the <code>config.rb</code> file from the last commit.</p>
+<p>丢弃修改<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout <span class="comment">-- config.rb</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level24_3A_remote"><a href="#Level24_3A_remote" class="headerlink" title="Level24: remote"></a>Level24: remote</h1><p>This project has a remote repository.  Identify it.</p>
+<p>remote命令的使用<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">git</span> remote</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level25_3A_remote_url"><a href="#Level25_3A_remote_url" class="headerlink" title="Level25: remote_url"></a>Level25: remote_url</h1><p>The remote repositories have a url associated to them.  Please enter the url of remote_location.</p>
+<p>还是remote命令的使用<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">git</span> remote -v</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level26_3A_pull"><a href="#Level26_3A_pull" class="headerlink" title="Level26: pull"></a>Level26: pull</h1><p>You need to pull changes from your origin repository.</p>
+<p>pull命令的使用<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin <span class="literal">master</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level27_3A_remote_add"><a href="#Level27_3A_remote_add" class="headerlink" title="Level27: remote_add"></a>Level27: remote_add</h1><p>Add a remote repository called <code>origin</code> with the url <a href="https://github.com/githug/githug" target="_blank" rel="external">https://github.com/githug/githug</a></p>
+<p>添加远程仓库<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote <span class="built_in">add</span> origin http<span class="variable">s:</span>//github.<span class="keyword">com</span>/githug/githug</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level28_3A_push"><a href="#Level28_3A_push" class="headerlink" title="Level28: push"></a>Level28: push</h1><p>Your local master branch has diverged from the remote origin/master branch. Rebase your commit onto origin/master and push it to remote.</p>
+<p>rebase命令的使用<br>这个命令没用过，网上找的答案<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rebase origin/<span class="keyword">master</span></span><br><span class="line"><span class="title">git</span> push origin <span class="literal">master</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level29_3A_diff"><a href="#Level29_3A_diff" class="headerlink" title="Level29: diff"></a>Level29: diff</h1><p>There have been modifications to the <code>app.rb</code> file since your last commit.  Find out which line has changed.</p>
+<p>diff命令的使用<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">git</span> diff</span><br></pre></td></tr></table></figure></p>
+<p>我没找到显示行号的参数，直接在SourceTree里看的行号</p>
+<hr>
+<h1 id="Level30_3A_blame"><a href="#Level30_3A_blame" class="headerlink" title="Level30: blame"></a>Level30: blame</h1><p>Someone has put a password inside the file <code>config.rb</code> find out who it was.</p>
+<p>blame命令的使用<br>找到密码对应行的提交者<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> <span class="keyword">blame </span>config.rb</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level31_3A_branch"><a href="#Level31_3A_branch" class="headerlink" title="Level31: branch"></a>Level31: branch</h1><p>You want to work on a piece of code that has the potential to break things, create the branch test_code.</p>
+<p>创建branch<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> <span class="keyword">branch </span>test_code</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level32_3A_checkout"><a href="#Level32_3A_checkout" class="headerlink" title="Level32: checkout"></a>Level32: checkout</h1><p>Create and switch to a new branch called my_branch.  You will need to create a branch like you did in the previous level.</p>
+<p>checkout命令的使用，创建branch并切换到这个branch<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -<span class="tag">b</span> my_branch</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level33_3A_checkout_tag"><a href="#Level33_3A_checkout_tag" class="headerlink" title="Level33: checkout_tag"></a>Level33: checkout_tag</h1><p>You need to fix a bug in the version 1.2 of your app. Checkout the tag <code>v1.2</code>.</p>
+<p>还是checkout命令的使用<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> checkout <span class="literal">v1</span>.<span class="number">2</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level34_3A_checkout_tag_over_branch"><a href="#Level34_3A_checkout_tag_over_branch" class="headerlink" title="Level34: checkout_tag_over_branch"></a>Level34: checkout_tag_over_branch</h1><p>You need to fix a bug in the version 1.2 of your app. Checkout the tag <code>v1.2</code> (Note: There is also a branch named <code>v1.2</code>).</p>
+<p>上面的命令中的v1.2是标签名，在没有同名的分支时可以这么用，现在有个同名的分支也叫v1.2，上面的命令默认是切换到v1.2分支，如果要切换到标签就要用下面的命令了：<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> checkout tags/<span class="literal">v1</span>.<span class="number">2</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level35_3A_branch_at"><a href="#Level35_3A_branch_at" class="headerlink" title="Level35: branch_at"></a>Level35: branch_at</h1><p>You forgot to branch at the previous commit and made a commit on top of it. Create branch test_branch at the commit before the last.</p>
+<p>把上一发commit添加到新的分支，这个是网上查的<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> <span class="keyword">branch </span>test_branch HEAD~<span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level36_3A_delete_branch"><a href="#Level36_3A_delete_branch" class="headerlink" title="Level36: delete_branch"></a>Level36: delete_branch</h1><p>You have created too many branches for your project. There is an old branch in your repo called ‘delete_me’, you should delete it.</p>
+<p>删除branch<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> <span class="keyword">branch </span>-d delete_me</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level37_3A_push_branch"><a href="#Level37_3A_push_branch" class="headerlink" title="Level37: push_branch"></a>Level37: push_branch</h1><p>You’ve made some changes to a local branch and want to share it, but aren’t yet ready to merge it with the ‘master’ branch.  Push only ‘test_branch’ to the remote repository</p>
+<p>push branch<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> <span class="keyword">push </span>origin test_branch</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level38_3A_merge"><a href="#Level38_3A_merge" class="headerlink" title="Level38: merge"></a>Level38: merge</h1><p>We have a file in the branch ‘feature’; Let’s merge it to the master branch.</p>
+<p>merge命令的使用<br><figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">merge</span> feature</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level39_3A_fetch"><a href="#Level39_3A_fetch" class="headerlink" title="Level39: fetch"></a>Level39: fetch</h1><p>Looks like a new branch was pushed into our remote repository. Get the changes without merging them with the local repository</p>
+<p>fetch命令的使用<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">git</span> fetch origin</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level40_3A_rebase"><a href="#Level40_3A_rebase" class="headerlink" title="Level40: rebase"></a>Level40: rebase</h1><p>We are using a git rebase workflow and the feature branch is ready to go into master. Let’s rebase the feature branch onto our master branch.</p>
+<p>rebase命令的使用<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout feature</span><br><span class="line">git rebase <span class="literal">master</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level41_3A_repack"><a href="#Level41_3A_repack" class="headerlink" title="Level41: repack"></a>Level41: repack</h1><p>Optimise how your repository is packaged ensuring that redundant packs are removed.</p>
+<p>这个命令压根没见过，help里的说明如图<br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""><br><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git repack <span class="operator">-d</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level42_3A_cherry-pick"><a href="#Level42_3A_cherry-pick" class="headerlink" title="Level42: cherry-pick"></a>Level42: cherry-pick</h1><p>Your new feature isn’t worth the time and you’re going to delete it. But it has one commit that fills in <code>README</code> file, and you want this commit to be on the master as well.</p>
+<p>cherry-pick命令的使用，找到对应的commit id<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git checkout<span class="instruction"> new-feature</span><br><span class="line"></span>git log</span><br><span class="line">git checkout master</span><br><span class="line">git cherry-pick ca32a6dac7b6f97975edbe19a4296c2ee7682f68</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level43_3A_grep"><a href="#Level43_3A_grep" class="headerlink" title="Level43: grep"></a>Level43: grep</h1><p>Your project’s deadline approaches, you should evaluate how many TODOs are left in your code</p>
+<p>找到”TODO”字符串的个数<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">grep</span> TODO</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level44_3A_rename_commit"><a href="#Level44_3A_rename_commit" class="headerlink" title="Level44: rename_commit"></a>Level44: rename_commit</h1><p>Correct the typo in the message of your first (non-root) commit.</p>
+<p>修改commit信息<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br><span class="line">git rebase -i <span class="number">601f</span>a90</span><br></pre></td></tr></table></figure></p>
+<p>将vim打开的文件中First coommit前的pick改为reword，保存退出，自动打开新的文件，修改commit信息</p>
+<hr>
+<h1 id="Level45_3A_squash"><a href="#Level45_3A_squash" class="headerlink" title="Level45: squash"></a>Level45: squash</h1><p>You have committed several times but would like all those changes to be one commit.</p>
+<p>合并几个commit为一个<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br><span class="line">git rebase -i <span class="number">618</span>a846</span><br></pre></td></tr></table></figure></p>
+<p>进入vim将commit前的pick改为s，留着第一发commit不改</p>
+<hr>
+<h1 id="Level46_3A_merge_squash"><a href="#Level46_3A_merge_squash" class="headerlink" title="Level46: merge_squash"></a>Level46: merge_squash</h1><p>合并分支并提交commit<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git merge --squash<span class="instruction"> long-feature-branch</span><br><span class="line"></span>git commit -m <span class="string">"commit"</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level47_3A_reorder"><a href="#Level47_3A_reorder" class="headerlink" title="Level47: reorder"></a>Level47: reorder</h1><p>You have committed several times but in the wrong order. Please reorder your commits.</p>
+<p>改变commit顺序<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br><span class="line">git rebase -i <span class="number">89</span>afdd</span><br></pre></td></tr></table></figure></p>
+<p>进入vim将第二行和第三行互换位置</p>
+<hr>
+<h1 id="Level48_3A_bisect"><a href="#Level48_3A_bisect" class="headerlink" title="Level48: bisect"></a>Level48: bisect</h1><p>A bug was introduced somewhere along the way.  You know that running <code>ruby prog.rb 5</code> should output 15.  You can also run <code>make test</code>.  What are the first 7 chars of the hash of the commit that introduced the bug.</p>
+<p>用二分法找到结果值和预期值第一次不同是在哪一发commit<br>先将头尾commit分别设置为good和bad，二分找的时候对每一个middle值手动判断good/bad，最后定位到第一次bad的位置<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git bisect <span class="literal">start</span></span><br><span class="line">git bisect good f608824</span><br><span class="line">git bisect bad <span class="keyword">master</span></span><br><span class="line"><span class="title">ruby</span> prog.rb <span class="number">5</span> <span class="comment">#看结果是否为15，标记good/bad，如此反复</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level49_3A_stage_lines"><a href="#Level49_3A_stage_lines" class="headerlink" title="Level49: stage_lines"></a>Level49: stage_lines</h1><p>You’ve made changes within a single file that belong to two different features, but neither of the changes are yet staged. Stage only the changes belonging to the first feature.</p>
+<p>只将文件中的某些行添加到暂存区<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add feature<span class="class">.rb</span> -e</span><br></pre></td></tr></table></figure></p>
+<p>删掉不想添加的行，保存。（这种操作在SourceTree里方便）</p>
+<hr>
+<h1 id="Level50_3A_find_old_branch"><a href="#Level50_3A_find_old_branch" class="headerlink" title="Level50: find_old_branch"></a>Level50: find_old_branch</h1><p>You have been working on a branch but got distracted by a major issue and forgot the name of it. Switch back to that branch.</p>
+<p>reflog（reference log的缩写）命令的使用，找出之前所在的分支<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">git</span> reflog</span><br><span class="line">git checkout solve_world_hunger</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level51_3A_revert"><a href="#Level51_3A_revert" class="headerlink" title="Level51: revert"></a>Level51: revert</h1><p>You have committed several times but want to undo the middle commit.<br>All commits have been pushed, so you can’t change existing history.</p>
+<p>revert命令的使用（居然有这么屌的命令我现在才知道。。）<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br><span class="line">git revert <span class="number">01719e9</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level52_3A_restore"><a href="#Level52_3A_restore" class="headerlink" title="Level52: restore"></a>Level52: restore</h1><p>You decided to delete your latest commit by running <code>git reset --hard HEAD^</code>.  (Not a smart thing to do.)  You then change your mind, and want that commit back.  Restore the deleted commit.</p>
+<p>reflog命令的使用，找回被删除的commit<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git reflog</span><br><span class="line">git checkout <span class="number">3e84</span>a7e</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level53_3A_conflict"><a href="#Level53_3A_conflict" class="headerlink" title="Level53: conflict"></a>Level53: conflict</h1><p>You need to merge mybranch into the current branch (master). But there may be some incorrect changes in mybranch which may cause conflicts. Solve any merge-conflicts you come across and finish the merge.</p>
+<p>修复合并后的冲突，刚实习的时候也被这个坑过<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="operator"><span class="keyword">merge</span> mybranch</span><br><span class="line">vim poem.txt</span><br><span class="line">git <span class="keyword">add</span> poem.txt</span><br><span class="line">git <span class="keyword">commit</span> -<span class="keyword">m</span> <span class="string">""</span></span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level54_3A_submodule"><a href="#Level54_3A_submodule" class="headerlink" title="Level54: submodule"></a>Level54: submodule</h1><p>You want to include the files from the following repo: <code>https://github.com/jackmaney/githug-include-me</code> into a the folder <code>./githug-include-me</code>. Do this without cloning the repo or copying the files from the repo into this repo.</p>
+<p>submodule命令的使用<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule <span class="built_in">add</span> http<span class="variable">s:</span>//github.<span class="keyword">com</span>/jackmaney/githug-include-<span class="keyword">me</span> githug-include-<span class="keyword">me</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Level55_3A_contribute"><a href="#Level55_3A_contribute" class="headerlink" title="Level55: contribute"></a>Level55: contribute</h1><p>This is the final level, the goal is to contribute to this repository by making a pull request on Github.  Please note that this level is designed to encourage you to add a valid contribution to Githug, not testing your ability to create a pull request.  Contributions that are likely to be accepted are levels, bug fixes and improved documentation.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;　　githug是一个让你熟悉git命令的小游戏，项目地址在这里&lt;a href=&quot;https://github.com/Gazler/githug&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/Gazler/githu
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>记一个iOS开发中cell的重用机制引发的错误</title>
+    <link href="http://note.altair21.org/2015/12/12/%E8%AE%B0%E4%B8%80%E4%B8%AAiOS%E5%BC%80%E5%8F%91%E4%B8%ADcell%E7%9A%84%E9%87%8D%E7%94%A8%E6%9C%BA%E5%88%B6%E5%BC%95%E5%8F%91%E7%9A%84%E9%94%99%E8%AF%AF/"/>
+    <id>http://note.altair21.org/2015/12/12/记一个iOS开发中cell的重用机制引发的错误/</id>
+    <published>2015-12-12T14:30:06.000Z</published>
+    <updated>2016-09-20T11:33:22.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Cell_u7684_u91CD_u7528_u673A_u5236"><a href="#Cell_u7684_u91CD_u7528_u673A_u5236" class="headerlink" title="Cell的重用机制"></a>Cell的重用机制</h2><p>　　在iOS开发中，cell有重用机制可以减少不必要的内存开销，对应于tableViewCell的dequeueReusableCellWithIdentifier方法，和collectionViewCell的dequeueReusableCellWithReuseIdentifier方法。重用机制更多内容不在这里做介绍。
+　　</p>
+<h2 id="u6211_u9047_u5230_u7684_u95EE_u9898"><a href="#u6211_u9047_u5230_u7684_u95EE_u9898" class="headerlink" title="我遇到的问题"></a>我遇到的问题</h2><p>　　<br>　　做实习项目时遇到的，现在有一个关注人列表，类似微博里那种，我在follow或者unfollow一个人的时候，会给网络发一个请求来刷新服务器数据，这段时间转一了一个菊花，我遇到的bug表现如下图所示<br>　　<img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""><br>　　<br>　　　　从图中可以看出，前两个button表现正常，第四个button点的时候菊花转在了第二个cell处，第三个button点击时在第一个cell那里闪了一下，应该是转了只不过这次网络请求callback太快没有看到，它的问题和第四个button一样。经过我多次测试发现，每一次第一次点击button的时候菊花都不会转错，但是从点击第二个button开始菊花位置就不能保证了。这个地方很奇怪，经验告诉我应该是重用机制造成的问题，但是我没有滚屏，按理说不应该进入到重用队列。</p>
+<p>　　随后我又在网上搜了一下重用机制，看到一个我之前不知道的：<font color="red">reloadData之后屏幕上的cell都进入重用队列，再重新重用。</font></p>
+<p>　　我进一步测试发现，如果每次点完按钮，再多等几秒钟，就不会出现菊花错位的问题，于是我找到了问题所在，我在第一个网络请求callback之后，又发了第二个网络请求，而那个请求的callback会刷新这个collectionView，即调用这个collectionView的reloadData方法，而我之所以要添加第二个网络请求，是为了修复另一个bug ，:-)。如果你想知道为什么reloadData之后菊花还会转，那是因为我加了一个标记。</p>
+<p>　　现在原因明确了，我点击第X的button时，第X-1个button发送的第二个网络请求还没有callback，等到它callback时刷新了collectionView，cell重用了，于是菊花跑偏了。所以等一段时间再点button不会出现这个问题，这段时间刚好是前一个button第二个网络请求callback回来。所以第一个button点的时候从来没有问题。</p>
+<p>　　经此一役，我加深了对cell重用机制的了解和理解。希望这篇文章对你也能有帮助:-)　　</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Cell_u7684_u91CD_u7528_u673A_u5236&quot;&gt;&lt;a href=&quot;#Cell_u7684_u91CD_u7528_u673A_u5236&quot; class=&quot;headerlink&quot; title=&quot;Cell的重用机制&quot;&gt;&lt;/a&gt;Cell的重用机制
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://note.altair21.org/tags/iOS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>记一个耍了我两天的iOS布局问题</title>
+    <link href="http://note.altair21.org/2015/12/01/%E8%AE%B0%E4%B8%80%E4%B8%AA%E8%80%8D%E4%BA%86%E6%88%91%E4%B8%A4%E5%A4%A9%E7%9A%84iOS%E5%B8%83%E5%B1%80%E9%97%AE%E9%A2%98/"/>
+    <id>http://note.altair21.org/2015/12/01/记一个耍了我两天的iOS布局问题/</id>
+    <published>2015-12-01T14:27:15.000Z</published>
+    <updated>2016-09-20T11:32:37.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg" alt=""></p>
+<p>　　如图所示是我的布局，抱歉图片没有边框。在iOS9.1以下版本使用上没有发现问题，而在iOS9.1中btn的坐标是相对于UIView的没错，但是indicator的坐标他妈的居然是相对于xib的！我不断言真的是相对于xib，但至少表现出来给人的感觉像是这样。在iOS9.1以下表现正常，因为压根就没想过这种情况，所以找了很久才发现问题所在。</p>
+<p>　　第二天问题出现了转机，因为测试的机器是iOS9.1的，我的环境是xcode7.0，不能直接在机器上debug，之前都是做release版本给机器用的。我更新到了xcode7.1，发现问题不存在了。不知道是xcode7.0的bug还是低版本的IDE做的build在高版本的系统上运行会出问题。经此一役，<font color="red">我决定以后IDE尽量用最新版本</font>。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;https://ws3.sinaimg.cn/large/0060lm7Tgw1f80a36nfgjj30r80933zm.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;　　如图所示是我的布局，抱歉图片没有边框。在iOS9.1以下版本使用上没有发现问题，而在i
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://note.altair21.org/tags/iOS/"/>
+    
+  </entry>
+  
+</feed>
