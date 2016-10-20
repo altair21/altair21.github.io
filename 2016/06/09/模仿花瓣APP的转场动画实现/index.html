@@ -2,6 +2,7 @@
 <h2 id="u52A8_u753B_u6548_u679C"><a href="#u52A8_u753B_u6548_u679C" class="headerlink" title="动画效果"></a>动画效果</h2><p>花瓣APP的转场动画比较有意思，我第一次看到就喜欢上了，为了美化自己毕业设计的游戏APP，我模仿了这个动画效果，花瓣APP的动画效果是这样的：<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f4pc8bjddyg30a90hxnpe.gif" alt=""></p>
 <p>这是我自己模仿的动画效果：<br><img src="https://ws4.sinaimg.cn/large/0060lm7Tgw1f4pda0lk6sg30m00glu0z.gif" alt=""></p>
 <p>其实效果还可以，不流畅是gif图的问题。</p>
+<a id="more"></a>
 <h2 id="u5B9E_u73B0_u601D_u8DEF"><a href="#u5B9E_u73B0_u601D_u8DEF" class="headerlink" title="实现思路"></a>实现思路</h2><p>我的思路是点击视图时给该视图截图，生成UIImage，然后在0.4秒的时间内把这个图片放大到全屏幕（即转场后的视图的初始模样），动画效果结束的回调中放置真正的转场逻辑。</p>
 <p>我的思路就是这样，感觉比较简单，有个问题是我截图之后图片放大材质会失真，转场后的场景是Spritekit的GameScene，重新加载了材质，就清晰很多，在它们衔接的时候会明显感觉到材质变清晰了，这个问题我没有去解决它，可能因为我比较粗的原因。不过回退的转场动画是从第二个视图截的图，不会有材质失真的问题。<br>Spritekit场景下截图参考了<a href="http://yulingtianxia.com/blog/2014/04/22/spritekitjie-ping-bing-fen-xiang-zhi-she-jiao-wang-luo/" target="_blank" rel="external">这篇文章</a>。</p>
 <p>附上核心代码</p>
