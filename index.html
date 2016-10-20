@@ -239,6 +239,105 @@
             
               
                 
+                <a class="post-title-link" href="/2016/10/19/AngularJS 中$timeout 和 $interval 引发的问题/" itemprop="url">
+                  AngularJS 中 $timeout 和  $interval 引发的问题
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-10-19T22:27:15+08:00" content="2016-10-19">
+              2016-10-19
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/19/AngularJS 中$timeout 和 $interval 引发的问题/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/19/AngularJS 中$timeout 和 $interval 引发的问题/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody">
+            
+              <h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p>前几天遇到了一个问题，就是在 AngularJS 中 $state 发生改变（或者称之为路由发生变化）不会清空前一个 scope 的内容，具体情景如下图</p>
+<p><img src="https://ws4.sinaimg.cn/large/9ce43335jw1f8xsm8wz9lg20a1057ju2.gif" alt=""></p>
+<p>我在这个 scope 添加了一个间隔十分钟的 $interval，为了方便演示我改成了三秒钟的，当我进行数次在这个页面和其他页面间切换后，发现这个 scope 里的 $interval 重叠了，之前的 $interval 都没有销毁，不仅表现出现了错误，还造成了内存泄漏。</p>
+<hr>
+<h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>解决方法是在 scope 触发 $destroy 时或者 $state 触发 $stateChangeSuccess 时手动取消 $interval</p>
+<pre><code>var intervalCancel = $interval(func, 3000);
+
+$scope.$on(&quot;$destroy&quot;, function (e) {   //$stateChangeSuccess
+    if (intervalCancel)
+        $interval.cancel(intervalCancel);
+});
+</code></pre><p>现在看起来就正常了<br><img src="https://ws4.sinaimg.cn/large/9ce43335jw1f8yiohbw6lg20a1057dh7.gif" alt=""></p>
+
+            
+          </span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/12/Chrome extension开发小记/" itemprop="url">
                   Chrome extension开发小记
                 </a>
@@ -1321,7 +1420,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1335,7 +1434,7 @@
 
           <div class="site-state-item site-state-tags">
             
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">标签</span>
               
           </div>
