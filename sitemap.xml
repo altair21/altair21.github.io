@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://note.altair21.org/2016/10/19/AngularJS%20%E4%B8%AD$timeout%20%E5%92%8C%20$interval%20%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98/</loc>
+    
+    <lastmod>2016-10-21T05:54:28.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://note.altair21.org/2016/08/02/OS%20X%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AE/</loc>
     
     <lastmod>2016-10-20T04:15:08.000Z</lastmod>
@@ -26,13 +33,6 @@
     <loc>http://note.altair21.org/2016/08/12/Chrome%20extension%E5%BC%80%E5%8F%91%E5%B0%8F%E8%AE%B0/</loc>
     
     <lastmod>2016-10-20T04:14:05.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://note.altair21.org/2016/10/19/AngularJS%20%E4%B8%AD$timeout%20%E5%92%8C%20$interval%20%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98/</loc>
-    
-    <lastmod>2016-10-20T04:13:56.000Z</lastmod>
     
   </url>
   
