@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://note.altair21.org/books/index.html</loc>
+    
+    <lastmod>2016-10-21T05:57:28.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://note.altair21.org/2016/10/19/AngularJS%20%E4%B8%AD$timeout%20%E5%92%8C%20$interval%20%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98/</loc>
     
     <lastmod>2016-10-21T05:54:28.000Z</lastmod>
@@ -68,13 +75,6 @@
     <loc>http://note.altair21.org/2015/12/01/%E8%AE%B0%E4%B8%80%E4%B8%AA%E8%80%8D%E4%BA%86%E6%88%91%E4%B8%A4%E5%A4%A9%E7%9A%84iOS%E5%B8%83%E5%B1%80%E9%97%AE%E9%A2%98/</loc>
     
     <lastmod>2016-10-20T03:50:57.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://note.altair21.org/books/index.html</loc>
-    
-    <lastmod>2016-09-20T11:56:42.000Z</lastmod>
     
   </url>
   
