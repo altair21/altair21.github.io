@@ -91,7 +91,7 @@ $scope.$on(&quot;$destroy&quot;, function (e) {   //$stateChangeSuccess
     <link href="http://note.altair21.org/2016/08/02/OS%20X%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AE/"/>
     <id>http://note.altair21.org/2016/08/02/OS X终端配置/</id>
     <published>2016-08-02T14:47:54.000Z</published>
-    <updated>2016-10-20T04:15:08.000Z</updated>
+    <updated>2016-11-02T04:55:27.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="u524D_u8A00"><a href="#u524D_u8A00" class="headerlink" title="前言"></a>前言</h2><p>我在OS X下也进行了不少次终端配置，每一次配置都忘了以往是怎么配置的，又各种google。刚好昨天公司配了台新的笔记本，我就把终端配置总结一下，方便自己日后查看。其实关于OS X的终端配置，池建强老师的<a href="http://macshuo.com/?p=676" target="_blank" rel="external">这篇文章</a>就很好，也是我第一次配置的重要参照。</p>
 <a id="more"></a>
@@ -105,6 +105,7 @@ $scope.$on(&quot;$destroy&quot;, function (e) {   //$stateChangeSuccess
 <h2 id="u66F4_u6539_u914D_u8272"><a href="#u66F4_u6539_u914D_u8272" class="headerlink" title="更改配色"></a>更改配色</h2><p>我使用的配色方案是<a href="http://ethanschoonover.com/solarized" target="_blank" rel="external">Solarized</a>，我在atom上使用这个配色感觉很恶心，但是在终端上使用却觉得很舒服。官网下载好之后解压，找到iTerm2对应的文件夹，双击后缀为<em>.itermcolors</em>的文件，就安装好了，提示信息告诉了你怎么使用：<br><img src="https://ws4.sinaimg.cn/large/0060lm7Tgw1f6ft52hvs2j30tk0ew0uq.jpg" alt=""></p>
 <p>先别着急关Preferences窗口，在Text选项卡里把<em>Draw bold text in bright colors</em>前的勾去掉，配色才能正常显示。</p>
 <p>字体我使用了Menlo常规体14号字，看上去大概是这个样子<br><img src="https://ws2.sinaimg.cn/large/0060lm7Tgw1f6fta3e0vbj31760vc0yh.jpg" alt="这是我终端最终的样子"></p>
+<p>还有一个叫做 <a href="https://github.com/sindresorhus/iterm2-snazzy" target="_blank" rel="external">snazzy</a> 的配色方案也不错，如下图所示<br><img src="https://ws4.sinaimg.cn/large/9ce43335jw1f9do9avgikj21760vck51.jpg" alt=""></p>
 <hr>
 <h2 id="zsh"><a href="#zsh" class="headerlink" title="zsh"></a>zsh</h2><p>OS X默认的shell是bash，但是它已预装了六个shell，可以在终端敲入<code>cat /etc/shells</code>查看，别的我也没有用过，看了池建强老师的文章我直接就换成zsh了。<br>输入<code>chsh -s /bin/zsh</code>可以将shell切换成zsh，需重启终端。</p>
 <hr>
