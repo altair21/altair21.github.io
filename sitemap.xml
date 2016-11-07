@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://note.altair21.org/about/index.html</loc>
+    
+    <lastmod>2016-11-07T07:47:05.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://note.altair21.org/2016/08/02/OS%20X%E7%BB%88%E7%AB%AF%E9%85%8D%E7%BD%AE/</loc>
     
     <lastmod>2016-11-02T04:55:27.000Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>http://note.altair21.org/books/index.html</loc>
     
     <lastmod>2016-10-24T11:27:25.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://note.altair21.org/about/index.html</loc>
-    
-    <lastmod>2016-10-22T11:15:32.000Z</lastmod>
     
   </url>
   
