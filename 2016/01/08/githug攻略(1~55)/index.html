@@ -133,7 +133,7 @@
 <p>cherry-pick命令的使用，找到对应的commit id<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">log</span> --pretty=<span class="keyword">format</span>:'%<span class="keyword">h</span> - %<span class="keyword">d</span> %s : %cr &lt;%<span class="keyword">an</span> - %ae&gt;' --<span class="keyword">graph</span> --branches</span><br></pre></td></tr></table></figure></p>
 <p>log信息如下图所示：<br><img src="https://ws2.sinaimg.cn/large/9ce43335jw1f9lzzya3sbj21fi0a011n.jpg" alt=""></p>
 <p>根据commit信息找到对应的hash，然后再执行cherry-pick<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick ca32a6dac<span class="number">7b6f97975</span>edbe<span class="number">19a4296c2</span>ee7682f68</span><br></pre></td></tr></table></figure></p>
-<p>关于log format的占位符，之后会写一篇总结</p>
+<p>关于log format的占位符说明，可以参照<a href="https://note.altair21.org/2016/11/10/git%20log%20%E5%8D%A0%E4%BD%8D%E7%AC%A6%E6%80%BB%E7%BB%93/">这里</a></p>
 <hr>
 <h1 id="Level43_3A_grep"><a href="#Level43_3A_grep" class="headerlink" title="Level43: grep"></a>Level43: grep</h1><p>Your project’s deadline approaches, you should evaluate how many TODOs are left in your code</p>
 <p>找到”TODO”字符串的个数<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">grep</span> -c TODO</span><br></pre></td></tr></table></figure></p>
