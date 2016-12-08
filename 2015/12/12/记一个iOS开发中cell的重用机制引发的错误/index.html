@@ -5,14 +5,12 @@
 <p>　　我进一步测试发现，如果每次点完按钮，再多等几秒钟，就不会出现菊花错位的问题，于是我找到了问题所在，我在第一个网络请求callback之后，又发了第二个网络请求，而那个请求的callback会刷新这个collectionView，即调用这个collectionView的reloadData方法，而我之所以要添加第二个网络请求，是为了修复另一个bug ，:-)。如果你想知道为什么reloadData之后菊花还会转，那是因为我加了一个标记。</p>
 <p>　　现在原因明确了，我点击第X的button时，第X-1个button发送的第二个网络请求还没有callback，等到它callback时刷新了collectionView，cell重用了，于是菊花跑偏了。所以等一段时间再点button不会出现这个问题，这段时间刚好是前一个button第二个网络请求callback回来。所以第一个button点的时候从来没有问题。</p>
 <p>　　经此一役，我加深了对cell重用机制的了解和理解。希望这篇文章对你也能有帮助:-)　　</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2016/01/08/githug攻略(1~55)/" class="prev">上一篇</a><a href="/2015/12/01/记一个耍了我两天的iOS布局问题/" class="next">下一篇</a></div><div data-thread-key="2015/12/12/记一个iOS开发中cell的重用机制引发的错误/" data-title="记一个iOS开发中cell的重用机制引发的错误" data-url="http://note.altair21.org/2015/12/12/记一个iOS开发中cell的重用机制引发的错误/" data-author-key="1" class="ds-thread"></div><script>var duoshuoQuery = {short_name:"altair21note"};
+</div></article></div></section><footer><div class="paginator"><a href="/2016/01/08/githug攻略(1~55)/" class="prev">上一篇</a><a href="/2015/12/01/记一个耍了我两天的iOS布局问题/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'altair21-note';
+var disqus_identifier = '2015/12/12/记一个iOS开发中cell的重用机制引发的错误/';
+var disqus_title = '记一个iOS开发中cell的重用机制引发的错误';
+var disqus_url = 'http://note.altair21.org/2015/12/12/记一个iOS开发中cell的重用机制引发的错误/';
 (function() {
-    var ds = document.createElement('script');
-    ds.type = 'text/javascript';ds.async = true;
-    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//note.altair21.org/js/embed.js';
-    ds.charset = 'UTF-8';
-    (document.getElementsByTagName('head')[0] 
-     || document.getElementsByTagName('body')[0]).appendChild(ds);
-})();
-
-</script><div class="copyright"><p>© 2014 - 2016 <a href="http://note.altair21.org">altair21</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-56273068-4",'auto');ga('send','pageview');</script></body></html>
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//altair21-note.disqus.com/count.js" async></script><div class="copyright"><p>© 2014 - 2016 <a href="http://note.altair21.org">altair21</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-56273068-4",'auto');ga('send','pageview');</script></body></html>
