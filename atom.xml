@@ -328,11 +328,11 @@
   </entry>
   
   <entry>
-    <title>AngularJS 中 $timeout 和  $interval 引发的问题</title>
+    <title>AngularJS 中 $timeout 和 $interval 引发的问题</title>
     <link href="http://note.altair21.org/2016/10/19/AngularJS%20%E4%B8%AD$timeout%20%E5%92%8C%20$interval%20%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98/"/>
     <id>http://note.altair21.org/2016/10/19/AngularJS 中$timeout 和 $interval 引发的问题/</id>
     <published>2016-10-19T14:27:15.000Z</published>
-    <updated>2016-10-21T05:54:28.000Z</updated>
+    <updated>2016-12-08T07:19:40.000Z</updated>
     
     <content type="html"><![CDATA[<h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p>前几天遇到了一个问题，就是在 AngularJS 中 $state 发生改变（或者称之为路由发生变化）不会清空前一个 scope 的内容，具体情景如下图</p>
 <p><img src="https://ws4.sinaimg.cn/large/9ce43335jw1f8xsm8wz9lg20a1057ju2.gif" alt=""></p>
