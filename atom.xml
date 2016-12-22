@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://note.altair21.org/"/>
-  <updated>2016-12-22T06:33:06.000Z</updated>
+  <updated>2016-12-22T06:39:59.000Z</updated>
   <id>http://note.altair21.org/</id>
   
   <author>
@@ -20,11 +20,11 @@
     <link href="http://note.altair21.org/2016/12/22/iOS%E4%B8%AD%E9%9A%90%E8%97%8FStatus%20Bar%E8%80%8C%E4%B8%8D%E6%94%B9%E5%8F%98Navigation%20Bar%E9%AB%98%E5%BA%A6%E7%9A%84%E5%81%9A%E6%B3%95/"/>
     <id>http://note.altair21.org/2016/12/22/iOS中隐藏Status Bar而不改变Navigation Bar高度的做法/</id>
     <published>2016-12-22T14:47:54.000Z</published>
-    <updated>2016-12-22T06:33:06.000Z</updated>
+    <updated>2016-12-22T06:39:59.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><p>在 Google 的 Inbox app 中，有这样一个场景：点击左上角按钮，弹出侧边栏，空白部分形成一个黑色半透明的遮罩，同时 status bar 隐藏，如下图<br><img src="https://ws3.sinaimg.cn/large/9ce43335jw1fazj0p558ig209n0h7qi1.gif" alt=""></p>
 <a id="more"></a>
-<p>view 层面为了实现对 navigation bar 的遮罩，使用 keyWindow 最直接。而要实现隐藏 status bar 的效果，如果直接使用<code>UIApplication.shared.isStatusBarHidden = true</code>语句，会产生这样的效果<br><img src="https://ws2.sinaimg.cn/large/9ce43335jw1fazj78cnn2g209n0h7jyt.gif" alt=""></p>
+<p>view 层面为了实现对 navigation bar 的遮罩，使用 keyWindow 最直接。而要实现隐藏 status bar 的效果，如果直接使用<code>UIApplication.shared.isStatusBarHidden = true</code>语句，会产生这样的效果<br><img src="https://ws2.sinaimg.cn/large/9ce43335jw1fazk9fu3axg209n0h7jz6.gif" alt=""></p>
 <p>随着 status bar 的隐藏，navigation bar 在 Y 轴的位置缩小了 20px，高度从 64px 变成了原本的 44px。</p>
 <hr>
 <h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h2><p>显然，单纯的一条隐藏 status bar 的语句不能满足需求，我在网上找了很多代码来试，都没法满足，除此之外就是一些 hack 做法了。后来看了一个开源库的源码，发现了一个不错的做法</p>
