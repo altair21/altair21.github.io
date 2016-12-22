@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://note.altair21.org/"/>
-  <updated>2016-12-02T06:15:43.000Z</updated>
+  <updated>2016-12-22T06:33:06.000Z</updated>
   <id>http://note.altair21.org/</id>
   
   <author>
@@ -14,6 +14,44 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>iOS中隐藏Status Bar而不改变Navigation Bar高度的做法</title>
+    <link href="http://note.altair21.org/2016/12/22/iOS%E4%B8%AD%E9%9A%90%E8%97%8FStatus%20Bar%E8%80%8C%E4%B8%8D%E6%94%B9%E5%8F%98Navigation%20Bar%E9%AB%98%E5%BA%A6%E7%9A%84%E5%81%9A%E6%B3%95/"/>
+    <id>http://note.altair21.org/2016/12/22/iOS中隐藏Status Bar而不改变Navigation Bar高度的做法/</id>
+    <published>2016-12-22T14:47:54.000Z</published>
+    <updated>2016-12-22T06:33:06.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><p>在 Google 的 Inbox app 中，有这样一个场景：点击左上角按钮，弹出侧边栏，空白部分形成一个黑色半透明的遮罩，同时 status bar 隐藏，如下图<br><img src="https://ws3.sinaimg.cn/large/9ce43335jw1fazj0p558ig209n0h7qi1.gif" alt=""></p>
+<a id="more"></a>
+<p>view 层面为了实现对 navigation bar 的遮罩，使用 keyWindow 最直接。而要实现隐藏 status bar 的效果，如果直接使用<code>UIApplication.shared.isStatusBarHidden = true</code>语句，会产生这样的效果<br><img src="https://ws2.sinaimg.cn/large/9ce43335jw1fazj78cnn2g209n0h7jyt.gif" alt=""></p>
+<p>随着 status bar 的隐藏，navigation bar 在 Y 轴的位置缩小了 20px，高度从 64px 变成了原本的 44px。</p>
+<hr>
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h2><p>显然，单纯的一条隐藏 status bar 的语句不能满足需求，我在网上找了很多代码来试，都没法满足，除此之外就是一些 hack 做法了。后来看了一个开源库的源码，发现了一个不错的做法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// show menu &amp; hide status bar</span></span><br><span class="line"><span class="keyword">let</span> keyWindow = <span class="type">UIApplication</span>.shared.keyWindow</span><br><span class="line">keyWindow?.windowLevel = <span class="type">UIWindowLevelStatusBar</span> + <span class="number">1</span></span><br><span class="line">keyWindow?.addSubview(menuView)</span><br><span class="line"></span><br><span class="line"><span class="comment">// hide menu &amp; show status bar</span></span><br><span class="line"><span class="type">UIApplication</span>.shared.keyWindow?.windowLevel = <span class="type">UIWindowLevelNormal</span></span><br></pre></td></tr></table></figure>
+<p>这段代码把当前的 keyWindow 的 <code>windowLevel</code>属性设置的大于 status bar 的 <code>windowLevel</code>，这样 status bar 实际上没有隐藏，只是它所在的 UIWindow 被当前的 keyWindow 覆盖了。</p>
+<p>效果如下<br><img src="https://ws4.sinaimg.cn/large/9ce43335jw1fazjnmkuggg209n0h7won.gif" alt=""></p>
+<p>这样看上去就和 Inbox 有几分相似了</p>
+<hr>
+<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h2><p>为什么改变了 keyWindow 的 <code>windowLevel</code>，会导致 status bar 被隐藏，而不是被遮挡呢？<br>实际上 status bar 有自己的 UIWindow，它的 <code>windowLevel</code> 等于 <code>UIWindowLevelStatusBar</code>，高于我们平常的 <code>UIWindowLevelNormal</code>，所以会优先显示 status bar，我们改变了 keyWindow 的 <code>windowLevel</code> 之后，由于 navigation bar 不透明，所以我们看不到它背后的 status bar，达到了隐藏 status bar 的效果。而 navigation bar 的高度不变，只要 status bar 不是隐藏状态，navigation bar 的高度就会在原始高度上加 20px。</p>
+<p>本来我想输出一下 <code>UIApplication.shared.windows</code> 看看是否真的有 status bar 的 UIWindow，但是输出结果并没有。官方文档中对这个属性的解释如下：</p>
+<blockquote>
+<p>This property contains the UIWindow objects currently associated with the app. This list does not include windows created and managed by the system, such as the window used to display the status bar.<br>The windows in the array are ordered from back to front by window level; thus, the last window in the array is on top of all other app windows.</p>
+</blockquote>
+<p>这也印证了 status bar 确实有自己的 UIWindow，只是无法通过这个属性得到它。</p>
+<p>现在就可以根据这个方法隐藏 status bar 而不改变 navigation bar 的高度了 :-p<br><img src="https://ws3.sinaimg.cn/large/9ce43335jw1fazk113adhg209n0h7124.gif" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot; class=&quot;headerlink&quot; title=&quot;0x00&quot;&gt;&lt;/a&gt;0x00&lt;/h2&gt;&lt;p&gt;在 Google 的 Inbox app 中，有这样一个场景：点击左上角按钮，弹出侧边栏，空白部分形成一个黑色半透明的遮罩，同时 status bar 隐藏，如下图&lt;br&gt;&lt;img src=&quot;https://ws3.sinaimg.cn/large/9ce43335jw1fazj0p558ig209n0h7qi1.gif&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="iOS" scheme="http://note.altair21.org/tags/iOS/"/>
+    
+  </entry>
   
   <entry>
     <title>iOS自定义转场动画</title>
