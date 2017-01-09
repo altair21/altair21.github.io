@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://note.altair21.org/books/index.html</loc>
+    
+    <lastmod>2017-01-09T10:49:06.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://note.altair21.org/about/index.html</loc>
     
     <lastmod>2017-01-06T10:19:25.000Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>http://note.altair21.org/2016/12/22/iOS%E4%B8%AD%E9%9A%90%E8%97%8FStatus%20Bar%E8%80%8C%E4%B8%8D%E6%94%B9%E5%8F%98Navigation%20Bar%E9%AB%98%E5%BA%A6%E7%9A%84%E5%81%9A%E6%B3%95/</loc>
     
     <lastmod>2016-12-22T06:39:59.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://note.altair21.org/books/index.html</loc>
-    
-    <lastmod>2016-12-15T04:17:34.000Z</lastmod>
     
   </url>
   
